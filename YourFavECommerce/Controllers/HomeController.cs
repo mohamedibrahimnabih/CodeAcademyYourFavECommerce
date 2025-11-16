@@ -18,7 +18,7 @@ namespace YourFavECommerce.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(string productName, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId)
+        public IActionResult Index(string productName, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId, bool isHot, int page = 1)
         {
             var products = _context.Products.AsNoTracking().Include(e => e.Category).AsQueryable();
 
@@ -34,6 +34,16 @@ namespace YourFavECommerce.Controllers
             if (categoryId is not null)
                 products = products.Where(e => e.CategoryId == categoryId);
 
+            if(brandId is not null)
+                products = products.Where(e => e.BrandId == brandId);
+
+            if(isHot)
+                products = products.Where(e => e.Discount > 20);
+
+            // Pagination
+            var totalPages = Math.Ceiling(products.Count() / 6.0); // 3.25 => 4
+            products = products.Skip((page - 1) * 6).Take(6); // 1
+
             var categories = _context.Categories.AsNoTracking().AsQueryable();
             var brands = _context.Brands.AsNoTracking().AsQueryable();
 
@@ -42,6 +52,8 @@ namespace YourFavECommerce.Controllers
                 Products = products.ToList(),
                 Categories = categories.ToList(),
                 Brands = brands.ToList(),
+                TotalPages = totalPages,
+                CurrentPage = page
             };
 
             return View(productWithRelatedVM);
