@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
+using YourFavECommerce.ViewModel;
 
 namespace YourFavECommerce.Controllers
 {
@@ -17,7 +18,7 @@ namespace YourFavECommerce.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index(string productName, decimal? minPrice)
+        public IActionResult Index(string productName, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId)
         {
             var products = _context.Products.AsNoTracking().Include(e => e.Category).AsQueryable();
 
@@ -27,7 +28,23 @@ namespace YourFavECommerce.Controllers
             if(minPrice is not null)
                 products = products.Where(e=>e.Price > minPrice);
 
-            return View(products.ToList());
+            if(maxPrice is not null)
+                products = products.Where(e => e.Price < maxPrice);
+
+            if (categoryId is not null)
+                products = products.Where(e => e.CategoryId == categoryId);
+
+            var categories = _context.Categories.AsNoTracking().AsQueryable();
+            var brands = _context.Brands.AsNoTracking().AsQueryable();
+
+            ProductWithRelatedVM productWithRelatedVM = new()
+            {
+                Products = products.ToList(),
+                Categories = categories.ToList(),
+                Brands = brands.ToList(),
+            };
+
+            return View(productWithRelatedVM);
         }
 
         public IActionResult Privacy()
