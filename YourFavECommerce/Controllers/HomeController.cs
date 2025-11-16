@@ -17,10 +17,17 @@ namespace YourFavECommerce.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string productName, decimal? minPrice)
         {
+            var products = _context.Products.AsNoTracking().Include(e => e.Category).AsQueryable();
 
-            return View();
+            if (productName is not null)
+                products = products.Where(e => e.Name.Contains(productName));
+
+            if(minPrice is not null)
+                products = products.Where(e=>e.Price > minPrice);
+
+            return View(products.ToList());
         }
 
         public IActionResult Privacy()

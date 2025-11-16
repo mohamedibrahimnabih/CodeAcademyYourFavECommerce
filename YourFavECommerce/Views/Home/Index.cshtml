@@ -1,119 +1,137 @@
-﻿@{
+﻿@model List<Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="container py-5">
-    <!-- Top Bar -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h4 class="mb-0">Product Collection</h4>
-        <div class="d-flex gap-2 align-items-center">
-            <span class="text-muted">Sort by:</span>
-            <button class="sort-btn">
-                Newest <i class="bi bi-chevron-down ms-2"></i>
-            </button>
+<!-- Header-->
+<header class="bg-dark py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="text-center text-white">
+            <h1 class="display-4 fw-bolder">Shop in style</h1>
+            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
         </div>
     </div>
+</header>
 
-    <div class="row g-4">
-        <!-- Filters Sidebar -->
-        <div class="col-lg-3">
-            <div class="filter-sidebar p-4 shadow-sm">
-                <div class="filter-group">
-                    <h6 class="mb-3">Categories</h6>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="electronics">
-                        <label class="form-check-label" for="electronics">
-                            Electronics
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="clothing">
-                        <label class="form-check-label" for="clothing">
-                            Clothing
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" id="accessories">
-                        <label class="form-check-label" for="accessories">
-                            Accessories
-                        </label>
-                    </div>
-                </div>
+<!-- Filter Section -->
+<section class="py-3 filter-bar">
+    <div class="container">
+        <div class="row" style="background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;">
+            <div class="col-12">
+                <form>
+                    <div class="row">
+                        <!-- Product Name -->
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="Product Name" name="productName">
+                        </div>
 
-                <div class="filter-group">
-                    <h6 class="mb-3">Price Range</h6>
-                    <input type="range" class="form-range" min="0" max="1000" value="500">
-                    <div class="d-flex justify-content-between">
-                        <span class="text-muted">$0</span>
-                        <span class="text-muted">$1000</span>
-                    </div>
-                </div>
+                        <!-- Price Range -->
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" placeholder="Min Price" name="minPrice">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" placeholder="Max Price">
+                        </div>
 
-                <div class="filter-group">
-                    <h6 class="mb-3">Colors</h6>
-                    <div class="d-flex gap-2">
-                        <div class="color-option selected" style="background: #000000;"></div>
-                        <div class="color-option" style="background: #dc2626;"></div>
-                        <div class="color-option" style="background: #2563eb;"></div>
-                        <div class="color-option" style="background: #16a34a;"></div>
-                    </div>
-                </div>
+                        <!-- Category -->
+                        <div class="col-md-2">
+                            <select class="form-control">
+                                <option>--Select Category--</option>
+                            </select>
+                        </div>
 
-                <div class="filter-group">
-                    <h6 class="mb-3">Rating</h6>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" id="rating4">
-                        <label class="form-check-label" for="rating4">
-                            <i class="bi bi-star-fill text-warning"></i> 4 & above
-                        </label>
-                    </div>
-                    <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="rating" id="rating3">
-                        <label class="form-check-label" for="rating3">
-                            <i class="bi bi-star-fill text-warning"></i> 3 & above
-                        </label>
-                    </div>
-                </div>
+                        <!-- Brand -->
+                        <div class="col-md-2">
+                            <select class="form-control">
+                                <option>--Select Brand--</option>
+                            </select>
+                        </div>
 
-                <button class="btn btn-outline-primary w-100">Apply Filters</button>
-            </div>
-        </div>
+                        <!-- Rating -->
+                        @* <div class="col-md-2"> *@
+                        @*     <select name="rating" class="form-control"> *@
+                        @*         <option value="">Any Rating</option> *@
+                        @*         <option>option 1</option> *@
+                        @*         <option>option 2</option> *@
+                        @*         <option>option 3</option> *@
+                        @*     </select> *@
+                        @* </div> *@
 
-        <!-- Product Grid -->
-        <div class="col-lg-9">
-            <div class="row g-4">
-                    <div class="col-md-4">
-                        <div class="product-card shadow-sm">
-                            <div class="position-relative">
-                                <img src="~/images/item.MainImg" class="product-image w-100" alt="Product">
-                                <span class="discount-badge">-item.Discount%</span>
-                                <button class="wishlist-btn">
-                                    <i class="bi bi-heart"></i>
-                                </button>
-                            </div>
-                            <div class="p-3">
-                                <span class="category-badge mb-2 d-inline-block">item.Category.Name</span>
-                                <h6 class="mb-1">item.Name</h6>
-                                <div class="rating-stars mb-2">
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-fill"></i>
-                                    <i class="bi bi-star-half"></i>
-                                    <span class="text-muted ms-2">(4.5)</span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="price">item.Price.ToString("c")</span>
-                                    <button class="btn cart-btn">
-                                        <i class="bi bi-cart-plus"></i>
-                                    </button>
-                                </div>
+                        <!-- Hot Product Checkbox -->
+                        <div class="col-md-1">
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input">
+                                <label class="form-check-label">Hot</label>
                             </div>
                         </div>
+
+                        <!-- Submit Button -->
+                        <div class="col-md-2 my-3">
+                            <button type="submit" class="btn btn-dark w-100">Filter</button>
+                        </div>
                     </div>
-
-
+                </form>
             </div>
         </div>
+    </div>
+</section>
+
+
+@* <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+        <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    </div>
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="..." class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="..." class="d-block w-100" alt="...">
+        </div>
+        <div class="carousel-item">
+            <img src="..." class="d-block w-100" alt="...">
+        </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div> *@
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4">
+                <div class="card product-card border-0 rounded-4 shadow-sm my-3">
+                    <div class="position-relative">
+                        <span class="badge bg-primary badge-custom">@item.Category.Name</span>
+                        <div class="overflow-hidden">
+                            <img src="~/images/@item.MainImg" class="card-img-top product-image" alt="Product Image">
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <h5 class="card-title mb-3 fw-bold">@item.Name</h5>
+                        <p class="card-text text-muted mb-4">
+                            Experience crystal clear sound with our latest noise-cancelling
+                            technology and premium build quality.
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="price">@item.Price.ToString("c")</span>
+                            <button class="btn btn-custom text-white px-4 py-2 rounded-pill">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 </div>
