@@ -27,11 +27,21 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a href="/category/index" class="nav-link text-dark">Categories</a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="/brand/index" class="nav-link text-dark">Brands</a>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Management System
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-item">
+                                    <a href="/category/index" class="nav-link text-dark">Categories</a>
+                                </li>
+                                <li class="dropdown-item">
+                                    <a href="/brand/index" class="nav-link text-dark">Brands</a>
+                                </li>
+                                <li class="dropdown-item">
+                                    <a href="/product/index" class="nav-link text-dark">Products</a>
+                                </li>
+                            </ul>
                         </li>
                     </ul>
                 </div>

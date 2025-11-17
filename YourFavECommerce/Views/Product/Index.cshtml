@@ -1,44 +1,14 @@
-﻿@using YourFavECommerce.ViewModel
-@model BrandWithRelatedVM
+﻿@model List<Product>
 
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-6">
-            <h2 class="display-6">All Brands</h2>
+            <h2 class="display-6">All Products</h2>
         </div>
         <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
             <a href="#" class="btn btn-success">Create</a>
         </div>
     </div>
-
-    <!-- Filter Section -->
-    <section class="py-3 filter-bar">
-        <div class="row" style="background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;">
-            <div class="col-12">
-                <form>
-                    <div class="row">
-                        <!-- Category Name -->
-                        <div class="col-md-3">
-                            <input type="text" class="form-control" placeholder="Brand Name" name="name">
-                        </div>
-
-                        <!-- Status -->
-                        @* <div class="col-md-2">
-                            <select name="status" class="form-control">
-                                <option value="true">Active</option>
-                                <option value="false">IN Active</option>
-                            </select>
-                        </div> *@
-
-                        <!-- Submit Button -->
-                        <div class="col-md-2">
-                            <button type="submit" class="btn btn-dark w-100">Filter</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
 
     <div class="row">
         <div class="col-12">
@@ -47,20 +17,33 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        <th scope="col">Price</th>
+                        <th scope="col">Discount</th>
+                        <th scope="col">Rate</th>
+                        <th scope="col">Category Name</th>
+                        <th scope="col">Brand Name</th>
                         <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-
-
-                    @foreach(var item in Model.Brands)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             <th scope="row">@item.Id</th>
                             <td>@item.Name</td>
+                            <td>@item.Price.ToString("c")</td>
+                            <td>@item.Discount</td>
+                            <td>
+                                @for(var i = 0; i < item.Rate; i++)
+                                {
+                                    <i class="bi bi-star-fill"></i>
+                                }
+                            </td>
+                            <td><span class="badge text-bg-primary">@item.Category.Name</span></td>
+                            <td><span class="badge text-bg-primary">@item.Brand.Name</span></td>
 
-                            @if(item.Status)
+                            @if (item.Status)
                             {
                                 <td><span class="badge text-bg-success">Active</span></td>
                             }
@@ -68,42 +51,14 @@
                             {
                                 <td><span class="badge text-bg-danger">IN Active</span></td>
                             }
-
                             <td>
                                 <a href="" type="button" class="btn btn-warning">Edit</a>
                                 <a href="" class="btn btn-danger btn-delete">Delete</a>
                             </td>
                         </tr>
                     }
-
-
                 </tbody>
             </table>
-        </div>
-    </div>
-
-    <div class="row justify-content-center">
-        <div class="col-md-12 justify-content-center">
-            <nav aria-label="Page navigation example">
-                <ul class="pagination" style="
-                    display: flex;
-                    justify-content: center;>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.CurrentPage - 1)" aria-label="Previous">
-                            <span aria-hidden="true">&laquo;</span>
-                        </a>
-                    </li>
-                    @for (var i = 1; i <= @Model.TotalPages; i++)
-                    {
-                        <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
-                    }
-                    <li class="page-item">
-                        <a class="page-link" href="?page=@(Model.CurrentPage + 1)" aria-label="Next">
-                            <span aria-hidden="true">&raquo;</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
         </div>
     </div>
 </div>
