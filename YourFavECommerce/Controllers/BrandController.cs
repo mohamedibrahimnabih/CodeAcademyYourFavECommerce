@@ -9,11 +9,12 @@ namespace YourFavECommerce.Controllers
     {
         private ApplicationDbContext _context = new();
 
-        public IActionResult Index(/* YOUR CODE HERE */ int page = 1)
+        public IActionResult Index(string name, int page = 1)
         {
             var brands = _context.Brands.AsNoTracking().AsQueryable();
 
-            /* YOUR CODE HERE */
+            if (name is not null)
+                brands = brands.Where(e => e.Name.ToLower().Contains(name.ToLower().Trim()));
 
             double totalPages = Math.Ceiling(brands.Count() / 5.0);
             int currentPage = page;
