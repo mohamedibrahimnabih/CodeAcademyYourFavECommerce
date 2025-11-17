@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
+using YourFavECommerce.Models;
 using YourFavECommerce.ViewModel;
 
 namespace YourFavECommerce.Controllers
@@ -34,6 +35,21 @@ namespace YourFavECommerce.Controllers
             };
 
             return View(categoryWithRelatedVM);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Category category)
+        {
+            _context.Categories.Add(category);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

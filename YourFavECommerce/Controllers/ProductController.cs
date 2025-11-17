@@ -10,7 +10,7 @@ namespace YourFavECommerce.Controllers
     {
         private ApplicationDbContext _context = new();
 
-        public IActionResult Index(string name, decimal? minPrice, decimal? maxPrice, int? categoryId, int page = 1)
+        public IActionResult Index(string name, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId, int page = 1)
         {
             var products = _context.Products.AsNoTracking().Include(e => e.Category).Include(e => e.Brand).AsQueryable();
 
@@ -25,6 +25,9 @@ namespace YourFavECommerce.Controllers
 
             if (categoryId is not null)
                 products = products.Where(e => e.CategoryId == categoryId);
+
+            if (brandId is not null)
+                products = products.Where(e => e.BrandId == brandId);
 
             var categories = _context.Categories.AsNoTracking().AsQueryable();
             var brands = _context.Brands.AsNoTracking().AsQueryable();

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
+using YourFavECommerce.Models;
 using YourFavECommerce.ViewModel;
 
 namespace YourFavECommerce.Controllers
@@ -28,5 +29,17 @@ namespace YourFavECommerce.Controllers
 
             return View(brandWithRelatedVM);
         }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        //[HttpPost]
+        //public IActionResult Create()
+        //{
+
+        //}
     }
 }
