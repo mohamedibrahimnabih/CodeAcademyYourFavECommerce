@@ -36,8 +36,16 @@ namespace YourFavECommerce.Controllers
             return View();
         }
 
-        //[HttpPost]
-        //public IActionResult Create()
+        [HttpPost]
+        public IActionResult Create(Brand brand)
+        {
+            _context.Brands.Add(brand);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //public IActionResult Delete(int id)
         //{
 
         //}

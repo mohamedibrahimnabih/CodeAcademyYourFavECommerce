@@ -7,7 +7,7 @@
             <h2 class="display-6">All Brands</h2>
         </div>
         <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
-            <a href="#" class="btn btn-success">Create</a>
+            <a href="/brand/create" class="btn btn-success">Create</a>
         </div>
     </div>
 
@@ -71,7 +71,7 @@
 
                             <td>
                                 <a href="" type="button" class="btn btn-warning">Edit</a>
-                                <a href="" class="btn btn-danger btn-delete">Delete</a>
+                                <a href="/brand/delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
                             </td>
                         </tr>
                     }
@@ -108,7 +108,7 @@
     </div>
 </div>
 
-@* <script>
+<script>
     document.addEventListener("DOMContentLoaded", function () {
         const deleteButtons = document.querySelectorAll(".btn-delete");
 
@@ -141,6 +141,6 @@
             });
         });
     });
-</script> *@
+</script>
 
 
