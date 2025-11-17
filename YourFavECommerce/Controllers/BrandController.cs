@@ -45,9 +45,27 @@ namespace YourFavECommerce.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //public IActionResult Delete(int id)
+        //[HttpGet]
+        //public IActionResult Edit(int id)
         //{
-
         //}
+
+        //[HttpPost]
+        //public IActionResult Edit(Brand brand)
+        //{
+        //}
+
+        public IActionResult Delete(int id)
+        {
+            var brand = _context.Brands.FirstOrDefault(e => e.Id == id);
+
+            if (brand is null)
+                return NotFound();
+
+            _context.Brands.Remove(brand);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

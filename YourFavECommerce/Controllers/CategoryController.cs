@@ -52,6 +52,26 @@ namespace YourFavECommerce.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var category = _context.Categories.FirstOrDefault(e => e.Id == id);
+
+            if (category is null)
+                return NotFound();
+
+            return View(category);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Category category)
+        {
+            _context.Categories.Update(category);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
         public IActionResult Delete(int id)
         {
             var category = _context.Categories.FirstOrDefault(e => e.Id == id);
