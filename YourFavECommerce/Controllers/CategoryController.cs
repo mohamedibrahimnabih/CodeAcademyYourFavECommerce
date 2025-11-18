@@ -49,6 +49,10 @@ namespace YourFavECommerce.Controllers
             _context.Categories.Add(category);
             _context.SaveChanges();
 
+            // Success msg
+            //Response.Cookies.Append("success-notifications", "Add Category Successfully");
+            TempData["success-notifications"] = "Add Category Successfully";
+
             return RedirectToAction(nameof(Index));
         }
 
@@ -70,6 +74,10 @@ namespace YourFavECommerce.Controllers
 
             _context.Categories.Update(category);
             _context.SaveChanges();
+
+            // Success msg
+            //Response.Cookies.Append("success-notifications", "Update Category Successfully");
+            TempData["success-notifications"] = "Update Category Successfully";
 
             return RedirectToAction(nameof(Index));
         }

@@ -134,6 +134,12 @@ namespace YourFavECommerce.Controllers
             if (brand is null)
                 return NotFound();
 
+            // Remove old img from wwwroot
+            string oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\brand_logos", brand.logo);
+
+            if (System.IO.File.Exists(oldFilePath))
+                System.IO.File.Delete(oldFilePath);
+
             _context.Brands.Remove(brand);
             _context.SaveChanges();
 
