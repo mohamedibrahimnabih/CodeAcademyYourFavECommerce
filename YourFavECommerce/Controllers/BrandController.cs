@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
@@ -31,29 +32,39 @@ namespace YourFavECommerce.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        public IActionResult Create() => View();
 
         [HttpPost]
-        public IActionResult Create(Brand brand)
+        public IActionResult Create(Brand brand, IFormFile logo)
         {
+            /* YOUR CODE HERE */
+
             _context.Brands.Add(brand);
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }
 
-        //[HttpGet]
-        //public IActionResult Edit(int id)
-        //{
-        //}
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var brand = _context.Brands.FirstOrDefault(e => e.Id == id);
 
-        //[HttpPost]
-        //public IActionResult Edit(Brand brand)
-        //{
-        //}
+            if (brand is null)
+                return NotFound();
+
+            return View(brand);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Brand brand)
+        {
+            _context.Brands.Update(brand);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+
+        }
 
         public IActionResult Delete(int id)
         {

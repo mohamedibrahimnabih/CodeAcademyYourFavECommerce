@@ -7,10 +7,15 @@
 
     <div class="row my-3">
         <div class="col-12">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
                     <input class="form-control" name="name">
+                </div>
+
+                <div class="mb-3">
+                    <label for="logo" class="form-label">Logo</label>
+                    <input type="file" class="form-control" name="logo" accept=".jpg, .jpeg, .png">
                 </div>
 
                 <div class="mb-3">

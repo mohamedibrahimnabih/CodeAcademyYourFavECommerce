@@ -47,6 +47,7 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
+                        @* <th scope="col">Logo</th> *@
                         <th scope="col">Status</th>
                         <th scope="col">Actions</th>
                     </tr>
@@ -59,6 +60,7 @@
                         <tr>
                             <th scope="row">@item.Id</th>
                             <td>@item.Name</td>
+                            @* <td><img src="~/images/brand_logos/@item.logo" width="100px" /></td> *@
 
                             @if(item.Status)
                             {
