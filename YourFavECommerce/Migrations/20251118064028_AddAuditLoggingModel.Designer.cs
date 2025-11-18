@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YourFavECommerce.Data;
 
@@ -11,9 +12,11 @@ using YourFavECommerce.Data;
 namespace YourFavECommerce.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251118064028_AddAuditLoggingModel")]
+    partial class AddAuditLoggingModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,7 @@ namespace YourFavECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("YourFavECommerce.Models.Category", b =>
@@ -75,7 +78,7 @@ namespace YourFavECommerce.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("YourFavECommerce.Models.Product", b =>
@@ -127,7 +130,7 @@ namespace YourFavECommerce.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("YourFavECommerce.Models.ProductColor", b =>
@@ -142,7 +145,7 @@ namespace YourFavECommerce.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductColors", (string)null);
+                    b.ToTable("ProductColors");
                 });
 
             modelBuilder.Entity("YourFavECommerce.Models.ProductSubImg", b =>
@@ -157,7 +160,7 @@ namespace YourFavECommerce.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductSubImgs", (string)null);
+                    b.ToTable("ProductSubImgs");
                 });
 
             modelBuilder.Entity("YourFavECommerce.Models.Product", b =>

@@ -66,6 +66,8 @@ namespace YourFavECommerce.Controllers
         [HttpPost]
         public IActionResult Edit(Category category)
         {
+            category.UpdatedAT = DateTime.Now;
+
             _context.Categories.Update(category);
             _context.SaveChanges();
 

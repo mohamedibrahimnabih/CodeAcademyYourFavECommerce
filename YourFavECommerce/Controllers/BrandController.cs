@@ -37,7 +37,26 @@ namespace YourFavECommerce.Controllers
         [HttpPost]
         public IActionResult Create(Brand brand, IFormFile logo)
         {
-            /* YOUR CODE HERE */
+            if (logo is not null && logo.Length > 0)
+            {
+                // Save file name in DB
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(logo.FileName);
+
+                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(logo.FileName)}";
+
+                brand.logo = fileName;
+
+                // Save file in wwwroot
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\brand_logos", fileName);
+
+                //if (System.IO.File.Exists(filePath))
+                //    System.IO.File.Create(filePath);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    logo.CopyTo(stream);
+                }
+            }
 
             _context.Brands.Add(brand);
             _context.SaveChanges();
@@ -57,13 +76,55 @@ namespace YourFavECommerce.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Brand brand)
+        public IActionResult Edit(Brand brand, IFormFile? logo)
         {
+            var brandInDB = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == brand.Id);
+
+            if (brandInDB is null)
+                return NotFound();
+
+            if (logo is not null)
+            {
+                // Save file name in DB
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(logo.FileName);
+
+                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(logo.FileName)}";
+
+                // Remove old img from wwwroot
+                string oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\brand_logos", brandInDB.logo);
+
+                if (System.IO.File.Exists(oldFilePath))
+                    System.IO.File.Delete(oldFilePath);
+
+                brand.logo = fileName;
+
+                // Save file in wwwroot
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\brand_logos", fileName);
+
+                //if (System.IO.File.Exists(filePath))
+                //    System.IO.File.Create(filePath);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    logo.CopyTo(stream);
+                }
+            }
+            else
+                brand.logo = brandInDB.logo;
+
+            // Solution 1
+            brand.UpdatedAT = DateTime.Now;
             _context.Brands.Update(brand);
+
+            // Solution 2
+            //brand.UpdatedAT = DateTime.Now;
+            //brand.Name = brand.Name;
+            //brand.Status = brand.Status;
+            //brand.CreateAT = brand.CreateAT;
+
             _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
-
         }
 
         public IActionResult Delete(int id)
