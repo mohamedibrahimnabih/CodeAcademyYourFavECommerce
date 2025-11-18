@@ -35,14 +35,20 @@ namespace YourFavECommerce.Controllers
         public IActionResult Create() => View();
 
         [HttpPost]
-        public IActionResult Create(Brand brand, IFormFile logo)
+        public IActionResult Create(CreateBrandWithLogoVM createBrandWithLogoVM)
         {
-            if (logo is not null && logo.Length > 0)
+            Brand brand = new()
+            {
+                Name = createBrandWithLogoVM.Name,
+                Status = createBrandWithLogoVM.Status
+            };
+
+            if (createBrandWithLogoVM.Logo is not null && createBrandWithLogoVM.Logo.Length > 0)
             {
                 // Save file name in DB
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(logo.FileName);
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(createBrandWithLogoVM.Logo.FileName);
 
-                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(logo.FileName)}";
+                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(createBrandWithLogoVM.Logo.FileName)}";
 
                 brand.logo = fileName;
 
@@ -54,12 +60,14 @@ namespace YourFavECommerce.Controllers
 
                 using (var stream = System.IO.File.Create(filePath))
                 {
-                    logo.CopyTo(stream);
+                    createBrandWithLogoVM.Logo.CopyTo(stream);
                 }
             }
 
             _context.Brands.Add(brand);
             _context.SaveChanges();
+
+            TempData["success-notifications"] = "Add Brand Successfully";
 
             return RedirectToAction(nameof(Index));
         }
@@ -76,19 +84,26 @@ namespace YourFavECommerce.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(Brand brand, IFormFile? logo)
+        public IActionResult Edit(UpdateBrandWithLogoVM updateBrandWithLogoVM)
         {
-            var brandInDB = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == brand.Id);
+            Brand brand = new()
+            {
+                Id = updateBrandWithLogoVM.Id,
+                Name = updateBrandWithLogoVM.Name,
+                Status = updateBrandWithLogoVM.Status
+            };
+
+            var brandInDB = _context.Brands.AsNoTracking().FirstOrDefault(e => e.Id == updateBrandWithLogoVM.Id);
 
             if (brandInDB is null)
                 return NotFound();
 
-            if (logo is not null)
+            if (updateBrandWithLogoVM.Logo is not null)
             {
                 // Save file name in DB
-                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(logo.FileName);
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(updateBrandWithLogoVM.Logo.FileName);
 
-                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(logo.FileName)}";
+                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(updateBrandWithLogoVM.Logo.FileName)}";
 
                 // Remove old img from wwwroot
                 string oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\brand_logos", brandInDB.logo);
@@ -106,7 +121,7 @@ namespace YourFavECommerce.Controllers
 
                 using (var stream = System.IO.File.Create(filePath))
                 {
-                    logo.CopyTo(stream);
+                    updateBrandWithLogoVM.Logo.CopyTo(stream);
                 }
             }
             else
@@ -123,6 +138,8 @@ namespace YourFavECommerce.Controllers
             //brand.CreateAT = brand.CreateAT;
 
             _context.SaveChanges();
+
+            TempData["success-notifications"] = "Update Brand Successfully";
 
             return RedirectToAction(nameof(Index));
         }

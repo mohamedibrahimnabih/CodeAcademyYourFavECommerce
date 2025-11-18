@@ -10,12 +10,12 @@ namespace YourFavECommerce.Controllers
     {
         private ApplicationDbContext _context = new();
 
-        public IActionResult Index(string name, int page = 1) // Mobiles
+        public IActionResult Index(FilterVM filterVM) // Mobiles
         {
             var categories = _context.Categories.AsNoTracking().AsQueryable();
 
-            if (name is not null)
-                categories = categories.Where(e => e.Name.ToLower().Contains(name.ToLower().Trim()));
+            if (filterVM.Name is not null)
+                categories = categories.Where(e => e.Name.ToLower().Contains(filterVM.Name.ToLower().Trim()));
 
             //if (status)
             //    categories = categories.Where(e => e.Status);
@@ -25,11 +25,11 @@ namespace YourFavECommerce.Controllers
             //categories = status ? categories.Where(e => e.Status) : categories.Where(e => !e.Status);
 
             double totalPages = Math.Ceiling(categories.Count() / 5.0);
-            int currentPage = page;
+            int currentPage = filterVM.Page;
 
             CategoryWithRelatedVM categoryWithRelatedVM = new()
             {
-                Categories = categories.Skip((page - 1) * 5).Take(5).ToList(),
+                Categories = categories.Skip((filterVM.Page - 1) * 5).Take(5).ToList(),
                 CurrentPage = currentPage,
                 TotalPages = totalPages
             };
