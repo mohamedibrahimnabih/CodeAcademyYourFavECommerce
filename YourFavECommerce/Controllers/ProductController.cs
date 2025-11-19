@@ -107,15 +107,54 @@ namespace YourFavECommerce.Controllers
             {
                 foreach (var item in createProductVM.SubImages)
                 {
-                    
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(item.FileName);
+
+                    string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(item.FileName)}";
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images", fileName);
+
+                    //if (!System.IO.File.Exists(filePath))
+                    //    System.IO.File.Create(filePath);
+
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        item.CopyTo(stream);
+                    }
+
+                    _context.ProductSubImgs.Add(new()
+                    {
+                        SubImg = fileName,
+                        ProductId = product.Id
+                    });
                 }
+                _context.SaveChanges();
             }
 
             #endregion
 
             #region Save Colors in DB
 
+            if(createProductVM.Colors is not null && createProductVM.Colors.Count > 0)
+            {
+                foreach (var item in createProductVM.Colors)
+                {
+                    _context.ProductColors.Add(new()
+                    {
+                        Color = item,
+                        ProductId = product.Id
+                    });
+                }
+                _context.SaveChanges();
+            }
+
             #endregion
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult Delete(int id)
+        {
+            /* YOUR CODE HERE */
 
             return RedirectToAction(nameof(Index));
         }
