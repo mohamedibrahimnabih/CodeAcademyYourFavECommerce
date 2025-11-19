@@ -11,19 +11,19 @@ namespace YourFavECommerce.Controllers
     {
         private ApplicationDbContext _context = new();
 
-        public IActionResult Index(string name, int page = 1)
+        public IActionResult Index(FilterVM filterVM)
         {
             var brands = _context.Brands.AsNoTracking().AsQueryable();
 
-            if (name is not null)
-                brands = brands.Where(e => e.Name.ToLower().Contains(name.ToLower().Trim()));
+            if (filterVM.Name is not null)
+                brands = brands.Where(e => e.Name.ToLower().Contains(filterVM.Name.ToLower().Trim()));
 
             double totalPages = Math.Ceiling(brands.Count() / 5.0);
-            int currentPage = page;
+            int currentPage = filterVM.Page;
 
             BrandWithRelatedVM brandWithRelatedVM = new()
             {
-                Brands = brands.Skip((page - 1) * 5).Take(5).ToList(),
+                Brands = brands.Skip((filterVM.Page - 1) * 5).Take(5).ToList(),
                 CurrentPage = currentPage,
                 TotalPages = totalPages
             };
