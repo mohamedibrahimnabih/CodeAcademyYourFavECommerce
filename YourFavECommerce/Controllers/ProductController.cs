@@ -176,11 +176,35 @@ namespace YourFavECommerce.Controllers
             });
         }
 
-        public IActionResult DeleteSubImg(string subImg, int productId)
+        public IActionResult DeleteSubImg(int id)
         {
-            /* YOUR CODE HERE */
+            var productSubImg = _context.ProductSubImgs.FirstOrDefault(e => e.Id == id);
 
-            return RedirectToAction(nameof(Edit), new { id = productId });
+            if (productSubImg is null)
+                return NotFound();
+
+            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images", productSubImg.SubImg);
+
+            if (System.IO.File.Exists(oldFilePath))
+                System.IO.File.Delete(oldFilePath);
+
+            _context.ProductSubImgs.Remove(productSubImg);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Edit), new { id = productSubImg.ProductId });
+        }
+
+        public IActionResult DeleteColor(int id)
+        {
+            var productColorInDB = _context.ProductColors.FirstOrDefault(e => e.Id == id);
+
+            if (productColorInDB is null)
+                return NotFound();
+
+            _context.ProductColors.Remove(productColorInDB);
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Edit), new { id = productColorInDB.ProductId });
         }
 
         public IActionResult Delete(int id)

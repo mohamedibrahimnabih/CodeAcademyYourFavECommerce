@@ -47,7 +47,7 @@
                                  src="~/images/product_images/product_sub_images/@item.SubImg"
                                  alt="Current Image"
                                  style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
-                            <a href="/Product/DeleteSubImg?subImg=@item.SubImg&productId=@Model.Product.Id" class="btn btn-danger btn-sm removeSubImg">X</a>
+                            <a href="/Product/DeleteSubImg?id=@item.Id" class="btn btn-danger btn-sm removeSubImg">X</a>
                         }
                     }
                 </div>
@@ -63,7 +63,7 @@
                             {
                                 <div class="mb-2 d-flex align-item-center">
                                     <input type="color" class="form-control form-control-color" name="Colors" value="@item.Color">
-                                    <a href="#" class="btn btn-danger btn-sm removeColor">X</a>
+                                    <a href="/Product/DeleteColor?id=@item.Id" class="btn btn-danger btn-sm">X</a>
                                 </div>
                             }
                         }
