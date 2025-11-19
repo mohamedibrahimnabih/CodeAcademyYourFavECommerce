@@ -12,17 +12,25 @@
             <form method="post" enctype="multipart/form-data">
                 <div class="mb-3">
                     <label for="name" class="form-label">Name</label>
-                    <input class="form-control" name="name">
+                    <input class="form-control" name="name" value="@Model.Product.Name">
                 </div>
 
                 <div class="mb-3">
                     <label for="Description" class="form-label">Description</label>
-                    <textarea class="form-control" rows="5" name="Description"></textarea>
+                    <textarea class="form-control" rows="5" name="Description">@Model.Product.Description</textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="MainImg" class="form-label">Main Image</label>
-                    <input type="file" class="form-control" name="MainImg" accept=".jpg, .jpeg, .png">
+                    <input type="file" class="form-control" name="MainImg" accept=".jpg, .jpeg, .png"
+                           onchange="previewImage(event)">
+                </div>
+
+                <div class="mb-3">
+                    <img id="preview"
+                         src="~/images/product_images/@Model.Product.MainImg"
+                         alt="Current Image"
+                         style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
                 </div>
 
                 <div class="mb-3">
@@ -31,12 +39,35 @@
                 </div>
 
                 <div class="mb-3">
+                    @if (Model.ProductSubImgs is not null)
+                    {
+                        @foreach (var item in Model.ProductSubImgs)
+                        {
+                            <img id="preview"
+                                 src="~/images/product_images/product_sub_images/@item.SubImg"
+                                 alt="Current Image"
+                                 style="max-width: 200px; border:1px solid #ccc; padding:5px; border-radius:10px;" />
+                            <a href="/Product/DeleteSubImg?subImg=@item.SubImg&productId=@Model.Product.Id" class="btn btn-danger btn-sm removeSubImg">X</a>
+                        }
+                    }
+                </div>
+
+                <div class="mb-3">
                     <label for="Color" class="form-label">Color</label>
 
                     <div id="colorContainer">
-                        <div class="mb-2 d-flex align-item-center">
-                            <input type="color" class="form-control form-control-color" name="Colors">
-                        </div>
+
+                        @if (Model.ProductColors is not null)
+                        {
+                            @foreach (var item in Model.ProductColors)
+                            {
+                                <div class="mb-2 d-flex align-item-center">
+                                    <input type="color" class="form-control form-control-color" name="Colors" value="@item.Color">
+                                    <a href="#" class="btn btn-danger btn-sm removeColor">X</a>
+                                </div>
+                            }
+                        }
+
                     </div>
 
                     <button type="button" id="addButtonColor" class="btn btn-outline-primary">+ Add New Color</button>
@@ -44,25 +75,32 @@
 
                 <div class="mb-3">
                     <label for="Price" class="form-label">Price</label>
-                    <input class="form-control" name="Price">
+                    <input class="form-control" name="Price" value="@Model.Product.Price">
                 </div>
 
                 <div class="mb-3">
                     <label for="Discount" class="form-label">Discount</label>
-                    <input class="form-control" name="Discount">
+                    <input class="form-control" name="Discount" value="@Model.Product.Discount">
                 </div>
 
                 <div class="mb-3">
                     <label for="Quantity" class="form-label">Quantity</label>
-                    <input class="form-control" name="Quantity">
+                    <input class="form-control" name="Quantity" value="@Model.Product.Quantity">
                 </div>
 
                 <div class="mb-3">
                     <label for="CategoryId" class="form-label">Category</label>
                     <select name="CategoryId" class="form-select">
-                        @foreach(var item in Model.Categories)
+                        @foreach (var item in Model.Categories)
                         {
-                            <option value="@item.Id">@item.Name</option>
+                            if (item.Id == Model.Product.CategoryId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
                         }
                     </select>
                 </div>
@@ -72,7 +110,14 @@
                     <select name="BrandId" class="form-select">
                         @foreach (var item in Model.Brands)
                         {
-                            <option value="@item.Id">@item.Name</option>
+                            if(item.Id == Model.Product.BrandId)
+                            {
+                                <option value="@item.Id" selected>@item.Name</option>
+                            }
+                            else
+                            {
+                                <option value="@item.Id" >@item.Name</option>
+                            }
                         }
                     </select>
                 </div>
@@ -111,4 +156,17 @@
             e.target.parentElement.remove();
         }
     })
+
+    function previewImage(event) {
+        const input = event.target;
+        const preview = document.getElementById("preview");
+
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result; // الصورة الجديدة
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
 </script>

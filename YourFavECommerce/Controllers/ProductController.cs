@@ -51,7 +51,7 @@ namespace YourFavECommerce.Controllers
             var categories = _context.Categories.AsNoTracking().AsQueryable();
             var brands = _context.Brands.AsNoTracking().AsQueryable();
 
-            return View(new ProductWithRelatedVM()
+            return View(new ProductVM()
             {
                 Categories = categories.ToList(),
                 Brands = brands.ToList()
@@ -152,9 +152,61 @@ namespace YourFavECommerce.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public IActionResult Delete(int id)
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            var product = _context.Products.FirstOrDefault(e => e.Id == id);
+
+            if (product is null)
+                return NotFound();
+
+            var categories = _context.Categories.AsNoTracking().AsQueryable();
+            var brands = _context.Brands.AsNoTracking().AsQueryable();
+
+            var productSubImages = _context.ProductSubImgs.Where(e => e.ProductId == id);
+            var productColors = _context.ProductColors.Where(e => e.ProductId == id);
+
+            return View(new ProductVM()
+            {
+                Product = product,
+                Brands = brands.ToList(),
+                Categories = categories.ToList(),
+                ProductSubImgs = productSubImages.ToList(),
+                ProductColors = productColors.ToList()
+            });
+        }
+
+        public IActionResult DeleteSubImg(string subImg, int productId)
         {
             /* YOUR CODE HERE */
+
+            return RedirectToAction(nameof(Edit), new { id = productId });
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var product = _context.Products.FirstOrDefault(e => e.Id == id);
+
+            if (product is null)
+                return NotFound();
+
+            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images", product.MainImg);
+
+            if (System.IO.File.Exists(oldFilePath))
+                System.IO.File.Delete(oldFilePath);
+
+            var oldProductSubImgs = _context.ProductSubImgs.Where(e => e.ProductId == id);
+
+            foreach (var item in oldProductSubImgs)
+            {
+                var oldSubImgPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images", item.SubImg);
+
+                if (System.IO.File.Exists(oldSubImgPath))
+                    System.IO.File.Delete(oldSubImgPath);
+            }
+
+            _context.Products.Remove(product);
+            _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }
