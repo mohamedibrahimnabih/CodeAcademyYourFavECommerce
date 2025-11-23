@@ -45,7 +45,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             var totalPages = Math.Ceiling(products.Count() / 8.0); // 3.25 => 4
             products = products.Skip((page - 1) * 8).Take(8); // 1
 
-            var categories = _context.Categories.AsNoTracking().AsQueryable();
+            var categories = _context.Categories.Include(e=>e.Products).AsNoTracking().AsQueryable();
             var brands = _context.Brands.AsNoTracking().AsQueryable();
 
             ProductWithRelatedVM productWithRelatedVM = new()
@@ -58,6 +58,16 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             };
 
             return View(productWithRelatedVM);
+        }
+
+        public IActionResult Details(int id)
+        {
+            var product = _context.Products.FirstOrDefault(e => e.Id == id);
+
+            if (product is null)
+                return NotFound();
+
+            return View(product);
         }
 
         public IActionResult Privacy()
