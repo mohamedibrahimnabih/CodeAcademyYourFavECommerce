@@ -14,9 +14,14 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Areas\Identity\Controllers\" />
+    <Folder Include="Areas\Identity\Views\" />
+    <Folder Include="Areas\ChatApp\Controllers\" />
+    <Folder Include="Areas\ChatApp\Views\" />
     <Folder Include="wwwroot\images\brand_logos\" />
     <Folder Include="wwwroot\images\product_images\product_sub_images\" />
   </ItemGroup>

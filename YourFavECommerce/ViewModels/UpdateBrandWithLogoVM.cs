@@ -1,4 +1,4 @@
-﻿namespace YourFavECommerce.ViewModel
+﻿namespace YourFavECommerce.ViewModels
 {
     public class UpdateBrandWithLogoVM
     {

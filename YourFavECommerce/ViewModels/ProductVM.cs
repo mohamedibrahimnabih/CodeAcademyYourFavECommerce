@@ -1,6 +1,6 @@
 ﻿using YourFavECommerce.Models;
 
-namespace YourFavECommerce.ViewModel
+namespace YourFavECommerce.ViewModels
 {
     public class ProductVM
     {

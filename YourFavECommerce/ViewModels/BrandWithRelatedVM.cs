@@ -1,10 +1,10 @@
 ﻿using YourFavECommerce.Models;
 
-namespace YourFavECommerce.ViewModel
+namespace YourFavECommerce.ViewModels
 {
-    public class CategoryWithRelatedVM
+    public class BrandWithRelatedVM
     {
-        public List<Category> Categories { get; set; } = default!;
+        public List<Brand> Brands { get; set; } = default!;
         public double TotalPages { get; set; }
         public int CurrentPage { get; set; }
     }

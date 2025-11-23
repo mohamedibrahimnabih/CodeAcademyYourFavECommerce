@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
-using YourFavECommerce.ViewModel;
+using YourFavECommerce.ViewModels;
 using Mapster;
 
-namespace YourFavECommerce.Controllers
+namespace YourFavECommerce.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class ProductController : Controller
     {
         private ApplicationDbContext _context = new();
