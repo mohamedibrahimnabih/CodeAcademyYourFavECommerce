@@ -3,14 +3,14 @@
 
 @* <h1>@Context.Request.Cookies["success-notifications"]</h1> *@
 
-@section Scripts {
+@* @section Scripts {
     @if (@TempData["success-notifications"] is not null)
     {
         <script>
             toastr.success('@TempData["success-notifications"]')
         </script>
     }
-}
+} *@
 
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
@@ -18,7 +18,7 @@
             <h2 class="display-6">All Categories</h2>
         </div>
         <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
-            <a href="/category/create" class="btn btn-success">Create</a>
+            <a href="/admin/category/create" class="btn btn-success">Create</a>
         </div>
     </div>
 
@@ -78,8 +78,8 @@
                                 <td><span class="badge text-bg-danger">IN Active</span></td>
                             }
                             <td>
-                                <a href="/category/edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
-                                <a href="/category/delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
+                                <a href="/admin/category/edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
+                                <a href="/admin/category/delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
                             </td>
                         </tr>
                     }
