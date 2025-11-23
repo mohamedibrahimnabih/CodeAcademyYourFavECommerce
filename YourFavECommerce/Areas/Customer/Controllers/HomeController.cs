@@ -42,8 +42,8 @@ namespace YourFavECommerce.Areas.Customer.Controllers
                 products = products.Where(e => e.Discount > 20);
 
             // Pagination
-            var totalPages = Math.Ceiling(products.Count() / 6.0); // 3.25 => 4
-            products = products.Skip((page - 1) * 6).Take(6); // 1
+            var totalPages = Math.Ceiling(products.Count() / 8.0); // 3.25 => 4
+            products = products.Skip((page - 1) * 8).Take(8); // 1
 
             var categories = _context.Categories.AsNoTracking().AsQueryable();
             var brands = _context.Brands.AsNoTracking().AsQueryable();
