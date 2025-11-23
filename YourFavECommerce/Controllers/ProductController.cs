@@ -176,6 +176,125 @@ namespace YourFavECommerce.Controllers
             });
         }
 
+        [HttpPost]
+        public IActionResult Edit(UpdateProductVM updateProductVM)
+        {
+            var productInDb = _context.Products.FirstOrDefault(e => e.Id == updateProductVM.Id);
+
+            if(productInDb is null)
+                return NotFound();
+
+            // Update Main Img if exist 
+            if(updateProductVM.MainImg is not null)
+            {
+                if(updateProductVM.MainImg.Length > 0)
+                {
+                    #region Save Img in wwwroot
+
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(updateProductVM.MainImg.FileName);
+
+                    string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(updateProductVM.MainImg.FileName)}";
+
+                    var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images", fileName);
+
+                    //if (!System.IO.File.Exists(filePath))
+                    //    System.IO.File.Create(filePath);
+
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        updateProductVM.MainImg.CopyTo(stream);
+                    }
+
+                    // Delete Old Img From wwwroot
+                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images", productInDb.MainImg);
+
+                    if (System.IO.File.Exists(oldFilePath))
+                        System.IO.File.Delete(oldFilePath);
+
+                    #endregion
+
+                    // Save Img in DB
+                    productInDb.MainImg = fileName;
+                }
+            }
+
+            // Update Sub Imgs if exist 
+            if(updateProductVM.SubImages is not null)
+            {
+                if(updateProductVM.SubImages.Count > 0)
+                {
+                    // Delete old sub imgs from wwwroot, DB
+                    var oldSubImgs = _context.ProductSubImgs.Where(e => e.ProductId == updateProductVM.Id);
+
+                    foreach (var item in oldSubImgs)
+                    {
+                        string oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images", item.SubImg);
+
+                        if (System.IO.File.Exists(oldFilePath))
+                            System.IO.File.Delete(oldFilePath);
+                    }
+                    _context.ProductSubImgs.RemoveRange(oldSubImgs);
+
+                    // Add New sub imgs in wwwroot, DB
+                    foreach (var item in updateProductVM.SubImages)
+                    {
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(item.FileName);
+
+                        string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(item.FileName)}";
+
+                        string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\product_images\\product_sub_images", fileName);
+
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            item.CopyTo(stream);
+                        }
+
+                        _context.ProductSubImgs.Add(new()
+                        {
+                            SubImg = fileName,
+                            ProductId = updateProductVM.Id
+                        });
+                    }
+                }
+            }
+
+            // Update Colors if exist 
+            if(updateProductVM.Colors is not null)
+            {
+                if(updateProductVM.Colors.Count > 0)
+                {
+                    var oldColors = _context.ProductColors.Where(e => e.ProductId == updateProductVM.Id);
+
+                    _context.ProductColors.RemoveRange(oldColors);
+
+                    foreach (var item in updateProductVM.Colors)
+                    {
+                        _context.ProductColors.Add(new()
+                        {
+                            Color = item,
+                            ProductId = updateProductVM.Id
+                        });
+                    }
+                }
+            }
+
+            // Update Product 
+            productInDb.Name = updateProductVM.Name;
+            productInDb.Description = updateProductVM.Description;
+            productInDb.Status = updateProductVM.Status;
+            productInDb.Price = updateProductVM.Price;
+            productInDb.Discount = updateProductVM.Discount;
+            productInDb.Quantity = updateProductVM.Quantity;
+            productInDb.CategoryId = updateProductVM.CategoryId;
+            productInDb.BrandId = updateProductVM.BrandId;
+
+            // Save Changes
+            _context.SaveChanges();
+
+            // Return
+            return RedirectToAction(nameof(Index));
+        }
+
         public IActionResult DeleteSubImg(int id)
         {
             var productSubImg = _context.ProductSubImgs.FirstOrDefault(e => e.Id == id);
