@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using YourFavECommerce.Data;
+using YourFavECommerce.Models;
+
 namespace YourFavECommerce
 {
     public class Program
@@ -8,6 +13,16 @@ namespace YourFavECommerce
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer("Data Source=.;Initial Catalog=CodeAcademyYourFavECommerce;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
+            {
+                config.Password.RequiredLength = 8;
+                config.User.RequireUniqueEmail = true;
+            })
+                .AddEntityFrameworkStores<ApplicationDbContext>();
 
             var app = builder.Build();
 

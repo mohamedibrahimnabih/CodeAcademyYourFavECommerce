@@ -25,6 +25,7 @@
     <meta name="theme-color" content="#ffffff">
     <script src="~/identity/assets/js/config.js"></script>
     <script src="~/identity/vendors/simplebar/simplebar.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
 
 
 
@@ -75,6 +76,9 @@
     <!--    End of Main Content-->
     <!-- ===============================================-->
 
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
 
 </body>
 
