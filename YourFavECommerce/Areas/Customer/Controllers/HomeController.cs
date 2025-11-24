@@ -72,6 +72,8 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var productInSameCategory = _context.Products.Include(e=>e.Category).Where(e => e.CategoryId == product.CategoryId && e.Id != product.Id).Skip(0).Take(4);
 
+            var productInSameBrand = _context.Products.Include(e=>e.Category).Where(e => e.BrandId == product.BrandId && e.Id != product.Id).Skip(0).Take(4);
+
             var productsInSameName = _context.Products.Include(e => e.Category).Where(e => e.Name.ToLower().Contains(product.Name) && e.Id != product.Id).Skip(0).Take(4);
 
             var minPrice = product.Price - ( product.Price * 0.1m );
@@ -87,6 +89,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
                 ProductInSameName = productsInSameName.ToList(),
                 ProductInSamePrice = productInSamePrice.ToList(),
                 TopProducts = topProudcts.ToList(),
+                ProductInSameBrand = productInSameBrand.ToList(),
             };
 
             return View(productDetailsVM);
