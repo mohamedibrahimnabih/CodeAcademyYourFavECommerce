@@ -63,11 +63,33 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         public IActionResult Details(int id)
         {
             var product = _context.Products.FirstOrDefault(e => e.Id == id);
-
+            
             if (product is null)
                 return NotFound();
 
-            return View(product);
+            product.Traffic += 1;
+            _context.SaveChanges();
+
+            var productInSameCategory = _context.Products.Include(e=>e.Category).Where(e => e.CategoryId == product.CategoryId && e.Id != product.Id).Skip(0).Take(4);
+
+            var productsInSameName = _context.Products.Include(e => e.Category).Where(e => e.Name.ToLower().Contains(product.Name) && e.Id != product.Id).Skip(0).Take(4);
+
+            var minPrice = product.Price - ( product.Price * 0.1m );
+            var maxPrice = product.Price + (product.Price * 0.1m);
+            var productInSamePrice = _context.Products.Include(e => e.Category).Where(e => e.Price > minPrice && e.Price < maxPrice && e.Id != product.Id);
+
+            var topProudcts = _context.Products.Include(e=>e.Category).Where(e=>e.Id != product.Id).OrderByDescending(e=>e.Traffic).Skip(0).Take(4);
+
+            ProductDetailsVM productDetailsVM = new()
+            {
+                Product = product,
+                ProductInSameCategory = productInSameCategory.ToList(),
+                ProductInSameName = productsInSameName.ToList(),
+                ProductInSamePrice = productInSamePrice.ToList(),
+                TopProducts = topProudcts.ToList(),
+            };
+
+            return View(productDetailsVM);
         }
 
         public IActionResult Privacy()
