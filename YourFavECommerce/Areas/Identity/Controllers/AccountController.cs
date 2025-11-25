@@ -56,7 +56,7 @@ namespace YourFavECommerce.Areas.Identity.Controllers
 
             // Send Email Confirmation
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(applicationUser);
-            var link = Url.Action("Confirm", "Account", new { area = "Identity", applicationUser.Id, token }, Request.Scheme);
+            var link = Url.Action(nameof(Confirm), "Account", new { area = "Identity", applicationUser.Id, token }, Request.Scheme);
 
             await _emailSender.SendEmailAsync(applicationUser.Email, "Pleas Confirm Your Account In Ecommerce Code Academy App",
                 $"<h1>Please Confirm You Account By clicking <a href='{link}'>Here</a></h1>");
@@ -68,7 +68,22 @@ namespace YourFavECommerce.Areas.Identity.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        
+        public async Task<IActionResult> Confirm(string id, string token)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+
+            if (user is null)
+                return NotFound();
+
+            var reuslt = await _userManager.ConfirmEmailAsync(user, token);
+
+            if (!reuslt.Succeeded)
+                TempData["error-notification"] = "Invalid Verficition";
+            else
+                TempData["success-notification"] = "Confirm You Account Successfully";
+
+            return RedirectToAction(nameof(Login));
+        }
 
         [HttpGet]
         public IActionResult Login()
@@ -113,12 +128,7 @@ namespace YourFavECommerce.Areas.Identity.Controllers
 
             if (result.Succeeded)
             {
-                if (!result.IsNotAllowed)
-                {
-                    ModelState.AddModelError("EmailOrUserName", "Please Confirm Your Account First");
-                    return View(loginVM);
-                }
-                else if (result.IsLockedOut)
+                if (result.IsLockedOut)
                 {
                     ModelState.AddModelError("EmailOrUserName", "Too many Attempts, Please try again later");
                     return View(loginVM);
