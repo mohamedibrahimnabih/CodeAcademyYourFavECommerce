@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
+using YourFavECommerce.Utilites;
 
 namespace YourFavECommerce
 {
@@ -17,12 +19,16 @@ namespace YourFavECommerce
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer("Data Source=.;Initial Catalog=CodeAcademyYourFavECommerce;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"));
 
+            builder.Services.AddTransient<IEmailSender, EmailSender>();
+
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(config =>
             {
                 config.Password.RequiredLength = 8;
                 config.User.RequireUniqueEmail = true;
+                config.SignIn.RequireConfirmedEmail = false;
             })
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
 
             var app = builder.Build();
 
