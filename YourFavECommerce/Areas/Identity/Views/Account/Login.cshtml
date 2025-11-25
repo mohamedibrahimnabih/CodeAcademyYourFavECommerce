@@ -1,4 +1,6 @@
-﻿<!-- ===============================================-->
+﻿@model LoginVM
+
+<!-- ===============================================-->
 <!--    Main Content-->
 <!-- ===============================================-->
 <main class="main" id="top">
@@ -21,12 +23,14 @@
                             </div>
                             <div class="col-auto fs--1 text-600"><span class="mb-0 undefined">or</span> <span><a href="/Identity/Account/Register">Create an account</a></span></div>
                         </div>
-                        <form>
+                        <form method="post">
                             <div class="mb-3">
-                                <input class="form-control" type="email" placeholder="Email address" />
+                                <input class="form-control" type="text" placeholder="Email address Or UserName" asp-for="EmailOrUserName" />
+                                <span class="text-danger" asp-validation-for="EmailOrUserName"></span>
                             </div>
                             <div class="mb-3">
-                                <input class="form-control" type="password" placeholder="Password" />
+                                <input class="form-control" type="password" placeholder="Password" asp-for="Password" />
+                                <span class="text-danger" asp-validation-for="Password"></span>
                             </div>
                             <div class="row flex-between-center">
                                 <div class="col-auto">
@@ -71,4 +75,6 @@
             toastr.success('@TempData["error-notifications"]')
         </script>
     }
+
+    <partial name="_ValidationScriptsPartial" />
 }

@@ -1,4 +1,6 @@
-﻿<div class="card overflow-hidden z-index-1">
+﻿@model RegisterVM
+
+<div class="card overflow-hidden z-index-1">
     <div class="card-body p-0">
         <div class="row g-0 h-100">
             <div class="col-md-5 text-center" style="background-color: #F28B00;">
@@ -22,20 +24,24 @@
                     <form method="post">
                         <div class="mb-3">
                             <label class="form-label" for="card-name">Name</label>
-                            <input class="form-control" type="text" autocomplete="on" id="card-name" name="name" />
+                            <input class="form-control" autocomplete="on" asp-for="Name" />
+                            <span class="text-danger" asp-validation-for="Name"></span>
                         </div>
                         <div class="mb-3">
                             <label class="form-label" for="card-email">Email address</label>
-                            <input class="form-control" type="email" autocomplete="on" id="card-email" name="email" />
+                            <input class="form-control" type="text" autocomplete="on" asp-for="Email" placeholder="test@gmail.com" />
+                            <span class="text-danger" asp-validation-for="Email"></span>
                         </div>
                         <div class="row gx-2">
                             <div class="mb-3 col-sm-6">
                                 <label class="form-label" for="card-password">Password</label>
-                                <input class="form-control" type="password" autocomplete="on" id="card-password" name="password" />
+                                <input class="form-control" type="password" autocomplete="on" asp-for="Password" />
+                                <span class="text-danger" asp-validation-for="Password"></span>
                             </div>
                             <div class="mb-3 col-sm-6">
                                 <label class="form-label" for="card-confirm-password">Confirm Password</label>
-                                <input class="form-control" type="password" autocomplete="on" id="card-confirm-password" name="confirmPassword" />
+                                <input class="form-control" type="password" autocomplete="on" asp-for="ConfirmPassword" />
+                                <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
                             </div>
                         </div>
                         <div class="form-check">
@@ -76,4 +82,6 @@
             toastr.success('@TempData["error-notifications"]')
         </script>
     }
+
+    <partial name="_ValidationScriptsPartial" />
 }
