@@ -1,13 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Mapster;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
+using YourFavECommerce.Utilites;
 using YourFavECommerce.ViewModels;
-using Mapster;
 
 namespace YourFavECommerce.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE},{SD.EMPLOYEE}")]
     public class ProductController : Controller
     {
         private ApplicationDbContext _context = new();
@@ -154,6 +157,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult Edit(int id)
         {
             var product = _context.Products.FirstOrDefault(e => e.Id == id);
@@ -178,6 +182,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult Edit(UpdateProductVM updateProductVM)
         {
             var productInDb = _context.Products.FirstOrDefault(e => e.Id == updateProductVM.Id);
@@ -296,6 +301,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult DeleteSubImg(int id)
         {
             var productSubImg = _context.ProductSubImgs.FirstOrDefault(e => e.Id == id);
@@ -313,7 +319,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Edit), new { id = productSubImg.ProductId });
         }
-
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult DeleteColor(int id)
         {
             var productColorInDB = _context.ProductColors.FirstOrDefault(e => e.Id == id);
@@ -327,6 +333,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
             return RedirectToAction(nameof(Edit), new { id = productColorInDB.ProductId });
         }
 
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult Delete(int id)
         {
             var product = _context.Products.FirstOrDefault(e => e.Id == id);

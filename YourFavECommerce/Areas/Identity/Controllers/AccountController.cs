@@ -29,12 +29,16 @@ namespace YourFavECommerce.Areas.Identity.Controllers
             _roleManager = roleManager;
         }
 
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction(nameof(Login));
+        }
+
         [HttpGet]
         public async Task<IActionResult> Register()
         {
-            /////////////////////////////
-
-
             return View(new RegisterVM());
         }
 

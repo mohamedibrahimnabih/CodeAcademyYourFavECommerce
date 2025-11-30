@@ -1,4 +1,5 @@
-﻿@using YourFavECommerce.ViewModels
+﻿@using YourFavECommerce.Utilites
+@using YourFavECommerce.ViewModels
 @model ProductWithRelatedVM
 
 <div class="container">
@@ -123,10 +124,17 @@
                             {
                                 <td><span class="badge text-bg-danger">IN Active</span></td>
                             }
-                            <td>
-                                <a href="/admin/Product/Edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
-                                <a href="/admin/Product/Delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
-                            </td>
+                            @if (User.IsInRole(SD.SUPER_ADMIN_ROLE) || User.IsInRole(SD.ADMIN_ROLE))
+                            {
+                                <td>
+                                    <a href="/admin/product/edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
+                                    <a href="/admin/product/delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>No Actions!!</td>
+                            }
                         </tr>
                     }
                 </tbody>
