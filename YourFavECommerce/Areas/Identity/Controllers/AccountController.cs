@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
+using YourFavECommerce.Utilites;
 using YourFavECommerce.ViewModels;
 
 namespace YourFavECommerce.Areas.Identity.Controllers
@@ -15,19 +17,24 @@ namespace YourFavECommerce.Areas.Identity.Controllers
         private ApplicationDbContext _context;// = new();
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IEmailSender _emailSender;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private UserManager<ApplicationUser> _userManager;// = new();
 
-        public AccountController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender)
+        public AccountController(UserManager<ApplicationUser> userManager, ApplicationDbContext context, SignInManager<ApplicationUser> signInManager, IEmailSender emailSender, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _context = context;
             _signInManager = signInManager;
             _emailSender = emailSender;
+            _roleManager = roleManager;
         }
 
         [HttpGet]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
+            /////////////////////////////
+
+
             return View(new RegisterVM());
         }
 
@@ -60,6 +67,8 @@ namespace YourFavECommerce.Areas.Identity.Controllers
 
             await _emailSender.SendEmailAsync(applicationUser.Email, "Pleas Confirm Your Account In Ecommerce Code Academy App",
                 $"<h1>Please Confirm You Account By clicking <a href='{link}'>Here</a></h1>");
+
+            await _userManager.AddToRoleAsync(applicationUser, SD.CUSTOMER);
 
 
             // Print Success msg
@@ -199,14 +208,98 @@ namespace YourFavECommerce.Areas.Identity.Controllers
                 return View(forgetPasswordVM);
             }
 
+            //var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            //var link = Url.Action("NewPassword", "Account", new { area = "Identity", user.Id, token }, Request.Scheme);
+
+            var otp = new Random().Next(1000, 9999);
+
+            var count = _context.ApplicationUserOTPs.Count(e => e.ApplicationUserId == user.Id && (DateTime.UtcNow - e.CreatedAT).TotalHours < 24);
+
+            if(count >= 4)
+            {
+                TempData["error-notification"] = "Too Many Atempts, Please Try Again Later";
+                return View(forgetPasswordVM);
+            }
+
+            else
+            {
+                _context.ApplicationUserOTPs.Add(new ApplicationUserOTP()
+                {
+                    OTP = otp.ToString(),
+                    ApplicationUserId = user.Id,
+                });
+                _context.SaveChanges();
+
+                await _emailSender.SendEmailAsync(user.Email, "Please Password Reset Your Account In Ecommerce Code Academy App",
+                    $"<h1>Password Reset By Using OTP {otp}</h1>");
+
+                TempData["success-notification"] = "Send Email Successfully";
+
+                return RedirectToAction(nameof(ValidateOTP), new { user.Id });
+            }
+        }
+
+        [HttpGet]
+        public IActionResult ValidateOTP(string id)
+        {
+            return View(new ValidateOTPVM()
+            {
+                Id = id,
+            });
+        }
+
+        [HttpPost]
+        public IActionResult ValidateOTP(ValidateOTPVM validateOTPVM)
+        {
+            if (!ModelState.IsValid)
+                return View(validateOTPVM);
+
+            var otp = _context.ApplicationUserOTPs.OrderBy(e=>e.Id).LastOrDefault(e => e.ApplicationUserId == validateOTPVM.Id && !e.IsUsed && e.ValidTo > DateTime.UtcNow);
+
+            if(otp.OTP == validateOTPVM.OTP)
+            {
+                otp.IsUsed = true;
+                _context.SaveChanges();
+                return RedirectToAction(nameof(NewPassword), new { validateOTPVM.Id });
+            }
+
+            TempData["error-notification"] = "Invalid OTP";
+            return View();
+        }
+
+        [HttpGet]
+        public IActionResult NewPassword(string id)
+        {
+            return View(new NewPasswordVM()
+            {
+                Id = id,
+            });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> NewPassword(NewPasswordVM newPasswordVM)
+        {
+            if (!ModelState.IsValid)
+                return View(newPasswordVM);
+
+           var user = await _userManager.FindByIdAsync(newPasswordVM.Id);
+
+            if (user is null)
+            {
+                TempData["error-notification"] = "User Not Found";
+                return View(newPasswordVM);
+            }
+
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var link = Url.Action("NewPassword", "Account", new { area = "Identity", user.Id, token }, Request.Scheme);
+            var result = await _userManager.ResetPasswordAsync(user, token, newPasswordVM.Password);
 
-            await _emailSender.SendEmailAsync(user.Email, "Please Password Reset Your Account In Ecommerce Code Academy App",
-                $"<h1>Password Reset By clicking <a href='{link}'>Here</a></h1>");
+            if(!result.Succeeded)
+            {
+                TempData["error-notification"] = result.Errors;
+                return View(newPasswordVM);
+            }
 
-            TempData["success-notification"] = "Send Email Successfully";
-
+            TempData["success-notification"] = "Change Password Successfully";
             return RedirectToAction(nameof(Login));
         }
     }

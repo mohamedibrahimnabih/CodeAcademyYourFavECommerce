@@ -1,4 +1,4 @@
-﻿@model ForgetPasswordVM
+﻿@model ValidateOTPVM
 
 <!-- ===============================================-->
 <!--    Main Content-->
@@ -19,17 +19,19 @@
                     <div class="card-body p-4 p-sm-5">
                         <div class="row flex-between-center mb-2">
                             <div class="col-auto">
-                                <h5>Forget Password</h5>
+                                <h5>Validate OTP</h5>
                             </div>
-                            <div class="col-auto fs--1 text-600"><span class="mb-0 undefined">or</span> <span><a href="/Identity/Account/Login">Back To Login</a></span></div>
+                            <div class="col-auto fs--1 text-600"><span class="mb-0 undefined">or</span> <span><a href="/Identity/Account/ForgetPassword">Back To Forget Password</a></span></div>
                         </div>
                         <form method="post">
+                            <input type="hidden" asp-for="Id" />
+
                             <div class="mb-3">
-                                <input class="form-control" type="text" placeholder="Email address Or UserName" asp-for="EmailOrUserName" />
-                                <span class="text-danger" asp-validation-for="EmailOrUserName"></span>
+                                <input class="form-control" type="text" placeholder="OTP" asp-for="OTP" />
+                                <span class="text-danger" asp-validation-for="OTP"></span>
                             </div>
                             <div class="mb-3">
-                                <button class="btn btn-primary d-block w-100 mt-3" style="background-color: #F28B00;border-block-color: #F28B00;" type="submit" name="submit">Send OTP</button>
+                                <button class="btn btn-primary d-block w-100 mt-3" style="background-color: #F28B00;border-block-color: #F28B00;" type="submit" name="submit">Validate OTP</button>
                             </div>
                         </form>
                     </div>

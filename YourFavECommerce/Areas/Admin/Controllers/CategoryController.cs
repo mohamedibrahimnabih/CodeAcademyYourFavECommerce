@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
+using YourFavECommerce.Utilites;
 using YourFavECommerce.ViewModels;
 
 namespace YourFavECommerce.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE},{SD.EMPLOYEE}")]
     public class CategoryController : Controller
     {
         private ApplicationDbContext _context = new();
@@ -58,6 +61,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult Edit(int id)
         {
             var category = _context.Categories.FirstOrDefault(e => e.Id == id);
@@ -69,6 +73,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult Edit(Category category)
         {
             category.UpdatedAT = DateTime.Now;
@@ -83,6 +88,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE}")]
         public IActionResult Delete(int id)
         {
             var category = _context.Categories.FirstOrDefault(e => e.Id == id);

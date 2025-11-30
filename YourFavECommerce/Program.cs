@@ -30,6 +30,12 @@ namespace YourFavECommerce
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
+            builder.Services.ConfigureApplicationCookie(config =>
+            {
+                config.LoginPath = "/Identity/Account/Login";
+                config.AccessDeniedPath = "/Identity/Account/Login";
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
