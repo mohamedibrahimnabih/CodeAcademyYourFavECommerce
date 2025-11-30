@@ -78,7 +78,7 @@ namespace YourFavECommerce.Areas.Identity.Controllers
             var reuslt = await _userManager.ConfirmEmailAsync(user, token);
 
             if (!reuslt.Succeeded)
-                TempData["error-notification"] = "Invalid Verficition";
+                TempData["error-notification"] = "Invalid Verification";
             else
                 TempData["success-notification"] = "Confirm You Account Successfully";
 
@@ -146,6 +146,68 @@ namespace YourFavECommerce.Areas.Identity.Controllers
             TempData["success-notification"] = "Welcome Back";
 
             return RedirectToAction("Index", "Home", new { area = "Customer" });
+        }
+
+        [HttpGet]
+        public IActionResult ResendEmailConfirmation()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResendEmailConfirmation(ResendEmailConfirmationVM resendEmailConfirmationVM)
+        {
+            if(!ModelState.IsValid)
+                return View(resendEmailConfirmationVM);
+
+            var user = await _userManager.FindByEmailAsync(resendEmailConfirmationVM.EmailOrUserName) ?? await _userManager.FindByNameAsync(resendEmailConfirmationVM.EmailOrUserName);
+
+            if (user is null)
+            {
+                TempData["error-notification"] = "User Not Found";
+                return View(resendEmailConfirmationVM);
+            }
+
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var link = Url.Action(nameof(Confirm), "Account", new { area = "Identity", user.Id, token }, Request.Scheme);
+
+            await _emailSender.SendEmailAsync(user.Email, "Resend - Pleas Confirm Your Account In Ecommerce Code Academy App",
+                $"<h1>Please Confirm You Account By clicking <a href='{link}'>Here</a></h1>");
+
+            TempData["success-notification"] = "Send Email Successfully";
+
+            return RedirectToAction(nameof(Login));
+        }
+
+        [HttpGet]
+        public IActionResult ForgetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ForgetPassword(ForgetPasswordVM forgetPasswordVM)
+        {
+            if (!ModelState.IsValid)
+                return View(forgetPasswordVM);
+
+            var user = await _userManager.FindByEmailAsync(forgetPasswordVM.EmailOrUserName) ?? await _userManager.FindByNameAsync(forgetPasswordVM.EmailOrUserName);
+
+            if (user is null)
+            {
+                TempData["error-notification"] = "User Not Found";
+                return View(forgetPasswordVM);
+            }
+
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var link = Url.Action("NewPassword", "Account", new { area = "Identity", user.Id, token }, Request.Scheme);
+
+            await _emailSender.SendEmailAsync(user.Email, "Please Password Reset Your Account In Ecommerce Code Academy App",
+                $"<h1>Password Reset By clicking <a href='{link}'>Here</a></h1>");
+
+            TempData["success-notification"] = "Send Email Successfully";
+
+            return RedirectToAction(nameof(Login));
         }
     }
 }
