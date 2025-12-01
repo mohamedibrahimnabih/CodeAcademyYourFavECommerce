@@ -6,5 +6,6 @@ namespace YourFavECommerce.Models
     {
         public string Name { get; set; }
         public string? Address { get; set; }
+        public string? Img { get; set; }
     }
 }
