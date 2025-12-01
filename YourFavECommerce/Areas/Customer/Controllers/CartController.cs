@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
@@ -20,9 +21,15 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) return NotFound();
+
+            var carts = _context.Carts.Include(e=>e.Product).Where(e => e.ApplicationUserId == user.Id);
+
+            return View(carts.ToList());
         }
 
         [HttpPost]
@@ -55,6 +62,42 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             _context.SaveChanges();
 
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult IncrementItem(int id)
+        {
+            var cart = _context.Carts.FirstOrDefault(e => e.Id == id);
+            if(cart is null) return NotFound();
+
+            cart.Count += 1;
+            _context.SaveChanges();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult DecrementItem(int id)
+        {
+            var cart = _context.Carts.FirstOrDefault(e => e.Id == id);
+            if (cart is null) return NotFound();
+
+            if(cart.Count > 1)
+            {
+                cart.Count -= 1;
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult DeleteItem(int id)
+        {
+            var cart = _context.Carts.FirstOrDefault(e => e.Id == id);
+
+            if (cart is null) return NotFound();
+
+            _context.Carts.Remove(cart);
+            _context.SaveChanges();
             return RedirectToAction(nameof(Index));
         }
     }
