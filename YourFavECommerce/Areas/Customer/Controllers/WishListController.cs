@@ -35,7 +35,45 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         //[HttpPost]
         public async Task<IActionResult> AddToWishList(int productId)
         {
-            /////////////////////////////////
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) return NotFound();
+
+            var Wishlists = _context.Wishlists.Include(e => e.Product).Where(e => e.ApplicationUserId == user.Id);
+
+            bool isFounded = false;
+
+            foreach (var item in Wishlists)
+            {
+                if(item.ProductId == productId)
+                {
+                    isFounded = true;
+                    break;
+                }
+            }
+
+            if (!isFounded)
+            {
+                _context.Wishlists.Add(new()
+                {
+                    ProductId = productId,
+                    ApplicationUserId = user.Id
+                });
+
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        public IActionResult DeleteItem(int id)
+        {
+            var wishList = _context.Wishlists.FirstOrDefault(e => e.Id == id);
+
+            if(wishList == null) return NotFound();
+
+            _context.Wishlists.Remove(wishList);
+            _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }
