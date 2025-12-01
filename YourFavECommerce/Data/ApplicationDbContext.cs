@@ -21,6 +21,7 @@ namespace YourFavECommerce.Data
         public DbSet<ProductColor> ProductColors { get; set; }
         public DbSet<ProductSubImg> ProductSubImgs { get; set; }
         public DbSet<ApplicationUserOTP> ApplicationUserOTPs { get; set; }
+        public DbSet<Wishlist> Wishlists { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

@@ -93,7 +93,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UpdateImg(string id, IFormFile Img)
+        public async Task<IActionResult> UpdateImage(string id, IFormFile Img)
         {
             if (!ModelState.IsValid)
                 return View();
@@ -103,8 +103,34 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             if (user == null) return NotFound();
 
             //Upload Img in wwwroot
-            //Update Img Column in DB
+            if(Img is not null && Img.Length > 0)
+            {
+                // Save file name in DB
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(Img.FileName);
+
+                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(Img.FileName)}";
+
+                // Save file in wwwroot
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\users", fileName);
+
+                //if (System.IO.File.Exists(filePath))
+                //    System.IO.File.Create(filePath);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    Img.CopyTo(stream);
+                }
+
+                var oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\users", user.Img);
+                if(System.IO.File.Exists(oldPath))
+                    System.IO.File.Delete(oldPath);
+
+                //Update Img Column in DB
+                user.Img = fileName;
+            }
+
             //Save Changes
+            await _userManager.UpdateAsync(user);
 
             return RedirectToAction(nameof(Index));
         }
