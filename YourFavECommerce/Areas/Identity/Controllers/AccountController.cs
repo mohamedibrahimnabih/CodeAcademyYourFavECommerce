@@ -217,9 +217,11 @@ namespace YourFavECommerce.Areas.Identity.Controllers
 
             var otp = new Random().Next(1000, 9999);
 
-            var count = _context.ApplicationUserOTPs.Count(e => e.ApplicationUserId == user.Id && (DateTime.UtcNow - e.CreatedAT).TotalHours < 24);
+            var count = _context.ApplicationUserOTPs.Count(e => e.ApplicationUserId == user.Id && e.CreatedAT >= DateTime.Now.AddHours(-24));
 
-            if(count >= 4)
+
+
+            if (count >= 4)
             {
                 TempData["error-notification"] = "Too Many Atempts, Please Try Again Later";
                 return View(forgetPasswordVM);
