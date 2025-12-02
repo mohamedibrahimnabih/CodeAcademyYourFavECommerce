@@ -1,8 +1,12 @@
-using System.Diagnostics;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
+using YourFavECommerce.Utilites;
 using YourFavECommerce.ViewModels;
 
 namespace YourFavECommerce.Areas.Customer.Controllers
@@ -11,16 +15,40 @@ namespace YourFavECommerce.Areas.Customer.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
         private ApplicationDbContext _context = new();
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _logger = logger;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
-        public IActionResult Index(string productName, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId, bool isHot, int page = 1)
+        public async Task<IActionResult> Index(string productName, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId, bool isHot, int page = 1)
         {
+            if (_roleManager.Roles.IsNullOrEmpty())
+            {
+                await _roleManager.CreateAsync(new(SD.SUPER_ADMIN_ROLE));
+                await _roleManager.CreateAsync(new(SD.ADMIN_ROLE));
+                await _roleManager.CreateAsync(new(SD.EMPLOYEE));
+                await _roleManager.CreateAsync(new(SD.CUSTOMER));
+
+                await _userManager.CreateAsync(new()
+                {
+                    UserName = "SuperAdmin",
+                    Name = "SuperAdmin",
+                    Email = "SuperAdmin@codeacademy.com",
+                    EmailConfirmed = true,
+                }, "Admin123$");
+
+                var user = await _userManager.FindByNameAsync("SuperAdmin");
+
+                await _userManager.AddToRoleAsync(user, SD.SUPER_ADMIN_ROLE);
+            }
+
+
             var products = _context.Products.AsNoTracking().Include(e => e.Category).AsQueryable();
 
             if (productName is not null)

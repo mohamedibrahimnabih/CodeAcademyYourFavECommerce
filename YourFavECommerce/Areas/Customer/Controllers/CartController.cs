@@ -21,13 +21,15 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string code)
         {
             var user = await _userManager.GetUserAsync(User);
 
             if (user == null) return NotFound();
 
             var carts = _context.Carts.Include(e=>e.Product).Where(e => e.ApplicationUserId == user.Id);
+
+            //////////////////////////
 
             return View(carts.ToList());
         }

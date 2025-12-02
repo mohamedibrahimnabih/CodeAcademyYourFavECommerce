@@ -32,7 +32,7 @@
                     <select name="ProductId" class="form-select">
                         @foreach (var item in ViewBag.products)
                         {
-                            @if (item.Id == Model.ProductId)
+                            @if(item.Id == Model.ProductId)
                             {
                                 <option value="@item.Id" selected>@item.Name</option>
                             }
