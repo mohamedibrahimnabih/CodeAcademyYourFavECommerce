@@ -1,0 +1,174 @@
+﻿@using YourFavECommerce.Utilites
+@using YourFavECommerce.ViewModels
+@model PromotionWithRelatedVM
+
+@* <h1>@Context.Request.Cookies["success-notifications"]</h1> *@
+
+@* @section Scripts {
+    @if (@TempData["success-notifications"] is not null)
+    {
+        <script>
+            toastr.success('@TempData["success-notifications"]')
+        </script>
+    }
+} *@
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-6">
+            <h2 class="display-6">All Promotions</h2>
+        </div>
+        <div class="col-md-6 text-md-end text-start mt-2 mt-md-0">
+            <a href="/admin/Promotion/create" class="btn btn-success">Create</a>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <section class="py-3 filter-bar">
+        <div class="row" style="background-color: rgba(var(--bs-light-rgb), var(--bs-bg-opacity)) !important;">
+            <div class="col-12">
+                <form>
+                    <div class="row">
+                        <!-- Promotion Name -->
+                        <div class="col-md-3">
+                            <input type="text" class="form-control" placeholder="Promotion Name" name="name">
+                        </div>
+
+                        <!-- Status -->
+                        @* <div class="col-md-2">
+                            <select name="status" class="form-control">
+                                <option value="true">Active</option>
+                                <option value="false">IN Active</option>
+                            </select>
+                        </div> *@
+
+                        <!-- Submit Button -->
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-dark w-100">Filter</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Code</th>
+                        <th scope="col">Discount</th>
+                        <th scope="col">Valid To</th>
+                        <th scope="col">Max Of Usage</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Promotions)
+                    {
+                        <tr>
+                            <th scope="row">@item.Id</th>
+                            <td>@item.Code</td>
+                            <td><span class="badge text-bg-info">@item.Discount</span></td>
+
+                            @if(item.ValidTo > DateTime.UtcNow)
+                            {
+                                <td><span class="badge text-bg-success">@item.ValidTo.ToString("dd-MM-yyyy")</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-bg-danger">@item.ValidTo.ToString("dd-MM-yyyy")</span></td>
+                            }
+
+                            @if (item.MaxOfUsage > 0)
+                            {
+                                <td><span class="badge text-bg-success">@item.MaxOfUsage</span></td>
+                            }
+                            else
+                            {
+                                <td><span class="badge text-bg-danger">@item.MaxOfUsage</span></td>
+                            }
+
+                            @if (User.IsInRole(SD.SUPER_ADMIN_ROLE) || User.IsInRole(SD.ADMIN_ROLE))
+                            {
+                                <td>
+                                    <a href="/admin/Promotion/edit?id=@item.Id" type="button" class="btn btn-warning">Edit</a>
+                                    <a href="/admin/Promotion/delete?id=@item.Id" class="btn btn-danger btn-delete">Delete</a>
+                                </td>
+                            }
+                            else
+                            {
+                                <td>No Actions!!</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-12 justify-content-center">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination" style="
+                    display: flex;
+                    justify-content: center;>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.CurrentPage - 1)" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    @for (var i = 1; i <= @Model.TotalPages; i++)
+                    {
+                        <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
+                    }
+                    <li class="page-item">
+                        <a class="page-link" href="?page=@(Model.CurrentPage + 1)" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const deleteButtons = document.querySelectorAll(".btn-delete");
+
+        deleteButtons.forEach(button => {
+            button.addEventListener("click", function (e) {
+                e.preventDefault(); // stop normal navigation
+
+                const url = this.getAttribute("href");
+
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "This action cannot be undone!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#d33",
+                    cancelButtonColor: "#3085d6",
+                    confirmButtonText: "Yes, delete it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire({
+                          title: "Deleted!",
+                          text: "Your file has been deleted.",
+                          icon: "success"
+                        });
+
+                        // Redirect to delete URL
+                        window.location.href = url;
+                    }
+                });
+            });
+        });
+    });
+</script>
+
+
