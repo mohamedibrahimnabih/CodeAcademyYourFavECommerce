@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Stripe;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
 using YourFavECommerce.Utilites;
@@ -35,6 +37,9 @@ namespace YourFavECommerce
                 config.LoginPath = "/Identity/Account/Login";
                 config.AccessDeniedPath = "/Identity/Account/Login";
             });
+
+            builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
+            StripeConfiguration.ApiKey = builder.Configuration["Stripe:SecretKey"];
 
             var app = builder.Build();
 

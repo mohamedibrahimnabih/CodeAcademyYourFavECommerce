@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe.Checkout;
 using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
@@ -29,7 +30,55 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var carts = _context.Carts.Include(e=>e.Product).Where(e => e.ApplicationUserId == user.Id);
 
-            //////////////////////////
+            if(code is not null)
+            {
+                var promotion = _context.Promotions.FirstOrDefault(e => e.Code == code && e.MaxOfUsage > 0 && e.ValidTo > DateTime.UtcNow);
+
+                if (promotion is null)
+                    TempData["error-notification"] = "Code Not Valid";
+                else
+                {
+                    var cartsInDb = _context.Carts.Where(e => e.ApplicationUserId == user.Id).ToList();
+                    bool isFounded = false;
+                    foreach (var item in cartsInDb)
+                    {
+                        if(item.ProductId == promotion.ProductId)
+                        {
+                            isFounded = true;
+
+                            var promotionUsers = _context.PromotionUsers.Where(e => e.ApplicationUserId == user.Id).ToList();
+
+                            bool isUsed = false; 
+                            foreach (var promotionUser in promotionUsers)
+                            {
+                                if (promotionUser.PromotionId == promotion.Id)
+                                {
+                                    TempData["error-notification"] = "Code Not Valid";
+                                    isUsed = true;
+                                    break;
+                                }
+                            }
+                                
+                            if (!isUsed)
+                            {
+                                item.Price -= promotion.Discount;
+                                promotion.MaxOfUsage -= 1;
+                                _context.PromotionUsers.Add(new()
+                                {
+                                    ApplicationUserId = user.Id,
+                                    PromotionId = promotion.Id
+                                });
+                                TempData["success-notification"] = "Code Not Valid";
+                                _context.SaveChanges();
+                            }
+
+                        }
+                    }
+
+                    if(!isFounded)
+                        TempData["error-notification"] = "Code Not Valid";
+                }
+            }
 
             return View(carts.ToList());
         }
@@ -101,6 +150,13 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             _context.Carts.Remove(cart);
             _context.SaveChanges();
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Pay()
+        {
+
+            /////////////////////////
+            return Redirect("");
         }
     }
 }
