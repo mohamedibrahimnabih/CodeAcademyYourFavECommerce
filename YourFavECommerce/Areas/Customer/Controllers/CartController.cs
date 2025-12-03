@@ -161,7 +161,13 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var carts = _context.Carts.Include(e => e.Product).Where(e => e.ApplicationUserId == user.Id);
 
-            ///////////////////////
+            Order order = new()
+            {
+                ApplicationUserId = user.Id,
+                TotalPrice = carts.Sum(e=>e.Price * e.Count),
+            };
+            _context.Orders.Add(order);
+            _context.SaveChanges();
 
             var options = new SessionCreateOptions
             {
@@ -194,7 +200,8 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             var service = new SessionService();
             var session = service.Create(options);
 
-            ///////////////////////
+            order.SessionId = session.Id;
+            _context.SaveChanges();
 
             return Redirect(session.Url);
         }
