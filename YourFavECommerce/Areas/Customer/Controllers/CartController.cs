@@ -155,8 +155,48 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         public async Task<IActionResult> Pay()
         {
 
-            /////////////////////////
-            return Redirect("");
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user == null) return NotFound();
+
+            var carts = _context.Carts.Include(e => e.Product).Where(e => e.ApplicationUserId == user.Id);
+
+            ///////////////////////
+
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>(),
+                Mode = "payment",
+                SuccessUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/success/{order.Id}",
+                CancelUrl = $"{Request.Scheme}://{Request.Host}/customer/checkout/cancel/{order.Id}",
+            };
+
+            foreach (var item in carts)
+            {
+                options.LineItems.Add(new SessionLineItemOptions
+                {
+                    PriceData = new SessionLineItemPriceDataOptions
+                    {
+                        Currency = "omr",
+                        ProductData = new SessionLineItemPriceDataProductDataOptions
+                        {
+                            Name = item.Product.Name,
+                            Description = item.Product.Description,
+                        },
+                        UnitAmount = (long)item.Price * 1000,
+                    },
+                    Quantity = item.Count,
+                });
+            }
+
+
+            var service = new SessionService();
+            var session = service.Create(options);
+
+            ///////////////////////
+
+            return Redirect(session.Url);
         }
     }
 }

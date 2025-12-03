@@ -25,6 +25,8 @@ namespace YourFavECommerce.Data
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<PromotionUser> PromotionUsers { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
