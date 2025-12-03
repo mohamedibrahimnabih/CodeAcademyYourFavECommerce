@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourFavECommerce.Data;
+using YourFavECommerce.Models;
 using YourFavECommerce.Utilites;
 using YourFavECommerce.ViewModels;
 
@@ -20,18 +21,53 @@ namespace YourFavECommerce.Areas.Admin.Controllers
 
         public IActionResult Index(FilterVM filterVM)
         {
-            ///////////////////
+            var orders = _context.Orders.Include(e=>e.ApplicationUser).AsQueryable();
+
+            if (filterVM.Name is not null)
+                orders = orders.Where(e => e.ApplicationUser.Name.ToLower().Contains(filterVM.Name.ToLower().Trim()));
 
 
-            return View();
+            double totalPages = Math.Ceiling(orders.Count() / 5.0);
+            int currentPage = filterVM.Page;
+
+            OrderWithRelatedVM orderWithRelatedVM = new()
+            {
+                Orders = orders.Skip((filterVM.Page - 1) * 5).Take(5).ToList(),
+                CurrentPage = currentPage,
+                TotalPages = totalPages
+            };
+
+            return View(orderWithRelatedVM);
         }
 
         public IActionResult Details(int id)
         {
-            ///////////////////
+            var order = _context.Orders.Include(e=>e.ApplicationUser).FirstOrDefault(e => e.Id == id);
 
+            if (order is null) return NotFound();
 
+            var orderItems = _context.OrderItems.Include(e=>e.Product).Where(e => e.OrderId == id);
+
+            return View(new OrderWithItemsVM()
+            {
+                Order = order,
+                OrderItems = orderItems.ToList()
+            });
+        }
+
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            /////
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult Edit(int id, OrderStatus orderStatus, string trackingNumber, string carrierName)
+        {
+           ////////////////
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }

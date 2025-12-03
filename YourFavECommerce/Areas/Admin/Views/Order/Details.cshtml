@@ -1,9 +1,9 @@
-﻿@model Order
+﻿@model OrderWithItemsVM
 
 <div class="container">
     <div class="row mb-3 align-items-center my-3">
         <div class="col-md-12">
-            <h2 class="display-6">Details Order @Model.Id - @Model.ApplicationUser.Name</h2>
+            <h2 class="display-6">Details Order @Model.Order.Id - @Model.Order.ApplicationUser.Name</h2>
         </div>
     </div>
 
@@ -12,75 +12,75 @@
             <form>
                 <div class="mb-3">
                     <label for="userName" class="form-label">User Name</label>
-                    <input class="form-control" disabled value="@Model.ApplicationUser.Name">
+                    <input class="form-control" disabled value="@Model.Order.ApplicationUser.Name">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Order Status</label>
-                    @if (Model.OrderStatus == OrderStatus.Pending)
+                    @if (Model.Order.OrderStatus == OrderStatus.Pending)
                     {
-                        <td><span class="badge text-bg-warning">@Model.OrderStatus</span></td>
+                        <td><span class="badge text-bg-warning">@Model.Order.OrderStatus</span></td>
                     }
-                    else if (Model.OrderStatus == OrderStatus.InProcessing)
+                    else if (Model.Order.OrderStatus == OrderStatus.InProcessing)
                     {
-                        <td><span class="badge text-bg-info">@Model.OrderStatus</span></td>
+                        <td><span class="badge text-bg-info">@Model.Order.OrderStatus</span></td>
                     }
-                    else if (Model.OrderStatus == OrderStatus.Shipped)
+                    else if (Model.Order.OrderStatus == OrderStatus.Shipped)
                     {
-                        <td><span class="badge text-bg-secondary">@Model.OrderStatus</span></td>
+                        <td><span class="badge text-bg-secondary">@Model.Order.OrderStatus</span></td>
                     }
-                    else if (Model.OrderStatus == OrderStatus.Canceled)
+                    else if (Model.Order.OrderStatus == OrderStatus.Canceled)
                     {
-                        <td><span class="badge text-bg-danger">@Model.OrderStatus</span></td>
+                        <td><span class="badge text-bg-danger">@Model.Order.OrderStatus</span></td>
                     }
-                    else if (Model.OrderStatus == OrderStatus.Completed)
+                    else if (Model.Order.OrderStatus == OrderStatus.Completed)
                     {
-                        <td><span class="badge text-bg-success">@Model.OrderStatus</span></td>
+                        <td><span class="badge text-bg-success">@Model.Order.OrderStatus</span></td>
                     }
                 </div>
                 <div class="mb-3">
                     <label for="TotalPrice" class="form-label">Total Price</label>
-                    <input type="number" class="form-control" disabled value="@Model.TotalPrice">
+                    <input type="number" class="form-control" disabled value="@Model.Order.TotalPrice">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Transaction Status</label>
-                    @if (Model.TransactionStatus == TransactionStatus.Pending)
+                    @if (Model.Order.TransactionStatus == TransactionStatus.Pending)
                     {
-                        <td><span class="badge text-bg-warning">@Model.TransactionStatus</span></td>
+                        <td><span class="badge text-bg-warning">@Model.Order.TransactionStatus</span></td>
                     }
-                    else if (Model.TransactionStatus == TransactionStatus.Completed)
+                    else if (Model.Order.TransactionStatus == TransactionStatus.Completed)
                     {
-                        <td><span class="badge text-bg-success">@Model.TransactionStatus</span></td>
+                        <td><span class="badge text-bg-success">@Model.Order.TransactionStatus</span></td>
                     }
-                    else if (Model.TransactionStatus == TransactionStatus.Canceled)
+                    else if (Model.Order.TransactionStatus == TransactionStatus.Canceled)
                     {
-                        <td><span class="badge text-bg-danger">@Model.TransactionStatus</span></td>
+                        <td><span class="badge text-bg-danger">@Model.Order.TransactionStatus</span></td>
                     }
                 </div>
                 <div class="mb-3">
                     <label for="sessionId" class="form-label">session Id</label>
-                    <input type="text" class="form-control" disabled value="@Model.SessionId">
+                    <input type="text" class="form-control" disabled value="@Model.Order.SessionId">
                 </div>
                 <div class="mb-3">
                     <label for="transactionId" class="form-label">transaction Id</label>
-                    <input type="text" class="form-control" disabled value="@Model.TransactionId">
+                    <input type="text" class="form-control" disabled value="@Model.Order.TransactionId">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Transaction Type</label>
-                    <td><span class="badge text-bg-info">@Model.TransactionType</span></td>
+                    <td><span class="badge text-bg-info">@Model.Order.TransactionType</span></td>
                 </div>
-                @if (Model.TrackingNumber is not null)
+                @if (Model.Order.TrackingNumber is not null)
                 {
                     <div class="mb-3">
                         <label class="form-label">Carrier Id</label>
-                        <input type="text" class="form-control" disabled value="@Model.TrackingNumber">
+                        <input type="text" class="form-control" disabled value="@Model.Order.TrackingNumber">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Carrier Name</label>
-                        <input type="text" class="form-control" disabled value="@Model.CarrierName">
+                        <input type="text" class="form-control" disabled value="@Model.Order.CarrierName">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Shipped Date</label>
-                        <input type="datetime" class="form-control" disabled value="@Model.ShippedDate">
+                        <input type="datetime" class="form-control" disabled value="@Model.Order.ShippedDate">
                     </div>
                 }
                 else
@@ -91,6 +91,34 @@
                     </div>
                 }
             </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Order Id</th>
+                        <th scope="col">Product Name</th>
+                        <th scope="col">Count</th>
+                        <th scope="col">Price</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderItems)
+                    {
+                        <tr>
+                            <th scope="row">@item.Id</th>
+                            <th scope="row">@item.OrderId</th>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Count</td>
+                            <td>@item.Price</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>

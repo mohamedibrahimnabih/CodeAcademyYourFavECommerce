@@ -1,0 +1,35 @@
+﻿@model Order
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-12">
+            <h2 class="display-6">Edit Order Details</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="mb-3">
+                    <label for="OrderStatus" class="form-label">OrderStatus</label>
+                    <select name="OrderStatus" class="form-select">
+                        <option>@OrderStatus.Shipped</option>
+                        <option>@OrderStatus.Completed</option>
+                        <option>@OrderStatus.Canceled</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="CarrierName" class="form-label">Carrier Name</label>
+                    <input type="text" class="form-control" name="CarrierName" value="@Model.CarrierName">
+                </div>
+                <div class="mb-3">
+                    <label for="TrackingNumber" class="form-label">Tracking Number</label>
+                    <input type="text" class="form-control" name="TrackingNumber" value="@Model.TrackingNumber">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
