@@ -26,7 +26,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             _roleManager = roleManager;
         }
 
-        public async Task<IActionResult> Index(string productName, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId, bool isHot, int page = 1)
+        public async Task<IActionResult> Index(string productName, long? minPrice, long? maxPrice, int? categoryId, int? brandId, bool isHot, int page = 1)
         {
             if (_roleManager.Roles.IsNullOrEmpty())
             {

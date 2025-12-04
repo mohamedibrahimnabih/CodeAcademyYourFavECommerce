@@ -190,7 +190,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
                             Name = item.Product.Name,
                             Description = item.Product.Description,
                         },
-                        UnitAmount = (long)item.Price * 1000,
+                        UnitAmount = (item.Price * 1000),
                     },
                     Quantity = item.Count,
                 });

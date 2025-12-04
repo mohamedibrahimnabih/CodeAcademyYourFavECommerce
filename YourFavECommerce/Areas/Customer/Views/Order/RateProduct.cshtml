@@ -1,0 +1,36 @@
+﻿<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-12">
+            <h2 class="display-6">Create new Rate</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="comment" class="form-label">Comment</label>
+                    <textarea class="form-control" name="comment"></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Img" class="form-label">Img</label>
+                    <input type="file" class="form-control" name="Img" accept=".jpg, .jpeg, .png">
+                </div>
+
+                <div class="">
+                    <h2>Rate this product</h2>
+                    <div class="star-rating">
+                        <input type="radio" name="rating" value="1"><i></i>
+                        <input type="radio" name="rating" value="2"><i></i>
+                        <input type="radio" name="rating" value="3"><i></i>
+                        <input type="radio" name="rating" value="4"><i></i>
+                        <input type="radio" name="rating" value="5"><i></i>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary my-3">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

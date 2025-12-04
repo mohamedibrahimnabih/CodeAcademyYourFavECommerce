@@ -15,7 +15,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
     {
         private ApplicationDbContext _context = new();
 
-        public IActionResult Index(string name, decimal? minPrice, decimal? maxPrice, int? categoryId, int? brandId, int page = 1)
+        public IActionResult Index(string name, long? minPrice, long? maxPrice, int? categoryId, int? brandId, int page = 1)
         {
             var products = _context.Products.AsNoTracking().Include(e => e.Category).Include(e => e.Brand).AsQueryable();
 

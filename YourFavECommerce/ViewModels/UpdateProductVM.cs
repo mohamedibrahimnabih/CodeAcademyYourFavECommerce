@@ -8,8 +8,8 @@
         public IFormFile? MainImg { get; set; }
         public List<IFormFile>? SubImages { get; set; } 
         public List<string>? Colors { get; set; }
-        public decimal Price { get; set; }
-        public decimal Discount { get; set; }
+        public long Price { get; set; }
+        public long Discount { get; set; }
         public int Quantity { get; set; }
         public int CategoryId { get; set; }
         public int BrandId { get; set; }

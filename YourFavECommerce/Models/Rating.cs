@@ -1,16 +1,17 @@
 ﻿namespace YourFavECommerce.Models
 {
-    public class Cart
+    public class Rating
     {
         public int Id { get; set; }
-
         public string ApplicationUserId { get; set; }
         public ApplicationUser ApplicationUser { get; set; }
 
         public int ProductId { get; set; }
         public Product Product { get; set; }
 
-        public int Count { get; set; }
-        public long Price { get; set; }
+        public string Comment { get; set; }
+        public double Rate { get; set; }
+
+        public string? Img { get; set; }
     }
 }

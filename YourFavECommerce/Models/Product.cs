@@ -7,8 +7,8 @@
         public string? Description { get; set; }
         public string MainImg { get; set; } = string.Empty;
         public bool Status { get; set; }
-        public decimal Price { get; set; }
-        public decimal Discount { get; set; }
+        public long Price { get; set; }
+        public long Discount { get; set; }
         public double Rate { get; set; }
         public int Traffic { get; set; }
         public int Quantity { get; set; }

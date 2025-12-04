@@ -33,7 +33,7 @@
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public OrderStatus OrderStatus { get; set; } = OrderStatus.Pending;
-        public decimal TotalPrice { get; set; }
+        public long TotalPrice { get; set; }
 
         public TransactionStatus TransactionStatus { get; set; } = TransactionStatus.Pending;
         public string SessionId { get; set; } = string.Empty;
