@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
@@ -48,7 +49,26 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
         public async Task<IActionResult> Details(int id)
         {
-            return View();
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null) return NotFound();
+
+            var orderDetails = _context.Orders.Include(e=>e.ApplicationUser).FirstOrDefault(e => e.Id == id && e.ApplicationUserId == user.Id);
+
+            var items = _context.OrderItems.Include(e=>e.Product).Where(e => e.OrderId == id);
+
+            return View(new OrderWithItemsVM()
+            {
+                Order = orderDetails,
+                OrderItems = items.ToList()
+            });
+        }
+
+        public async Task<IActionResult> Refund(int id)
+        {
+            
+
+            return RedirectToAction("index");
         }
     }
 }

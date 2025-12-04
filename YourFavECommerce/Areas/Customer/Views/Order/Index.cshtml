@@ -105,7 +105,7 @@
                                 <td>
                                     <a href="/customer/Order/details?id=@item.Id" type="button" class="btn btn-info">Details</a>
 
-                                    @if (item.TrackingNumber is null)
+                                    @if (item.TrackingNumber is null && item.TransactionStatus != TransactionStatus.Refunded)
                                     {
                                         <a href="/customer/Order/refund?id=@item.Id" type="button" class="btn btn-danger">Refund</a>
                                     }
