@@ -58,14 +58,29 @@ namespace YourFavECommerce.Areas.Admin.Controllers
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            /////
-            return View();
+            var order = _context.Orders.Include(e => e.ApplicationUser).FirstOrDefault(e => e.Id == id);
+
+            if (order is null) return NotFound();
+
+            return View(order);
         }
 
         [HttpPost]
         public IActionResult Edit(int id, OrderStatus orderStatus, string trackingNumber, string carrierName)
         {
-           ////////////////
+            if (!ModelState.IsValid)
+                return View();
+
+            var orderInDb = _context.Orders.Include(e => e.ApplicationUser).FirstOrDefault(e => e.Id == id);
+
+            if (orderInDb is null) return NotFound();
+
+            orderInDb.OrderStatus = orderStatus;
+            orderInDb.TrackingNumber = trackingNumber;
+            orderInDb.CarrierName = carrierName;
+            orderInDb.ShippedDate = DateTime.UtcNow;
+
+            _context.SaveChanges();
 
             return RedirectToAction(nameof(Index));
         }

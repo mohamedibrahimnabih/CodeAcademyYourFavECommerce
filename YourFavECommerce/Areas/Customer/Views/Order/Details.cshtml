@@ -1,0 +1,67 @@
+﻿@model OrderWithItemsVM
+
+<div class="container my-3">
+    <article class="card">
+        <header class="card-header"> My Orders / Tracking </header>
+        <div class="card-body">
+            <h6>Order ID: @Model.Order.Id</h6>
+            <article class="card">
+                <div class="card-body row">
+                    <div class="col"> <strong>Estimated Delivery time:</strong> <br>@Model.Order.ShippedDate.ToString("dd-MM-yyyy") </div>
+                    <div class="col"> <strong>Shipping TO:</strong> <br> @Model.Order.ApplicationUser.Address, | <i class="fa fa-phone"></i> @Model.Order.ApplicationUser.PhoneNumber </div>
+                    <div class="col"> <strong>Status:</strong> <br> @Model.Order.OrderStatus </div>
+                    <div class="col"> <strong>Tracking #:</strong> <br> @Model.Order.TrackingNumber </div>
+                </div>
+            </article>
+            <div class="track">
+
+                @if(Model.Order.OrderStatus == OrderStatus.Pending)
+                {
+                    <div class="step"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text"> Picked by courier</span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Completed</span> </div>
+                }
+                else if(Model.Order.OrderStatus == OrderStatus.InProcessing)
+                {
+                    <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text"> Picked by courier</span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Completed</span> </div>
+                }
+                else if (Model.Order.OrderStatus == OrderStatus.Shipped)
+                {
+                    <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
+                    <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text"> Picked by courier</span> </div>
+                    <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
+                    <div class="step"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Completed</span> </div>
+                }
+                else if (Model.Order.OrderStatus == OrderStatus.Completed)
+                {
+                    <div class="step active"> <span class="icon"> <i class="fa fa-check"></i> </span> <span class="text">Order confirmed</span> </div>
+                    <div class="step active"> <span class="icon"> <i class="fa fa-user"></i> </span> <span class="text"> Picked by courier</span> </div>
+                    <div class="step active"> <span class="icon"> <i class="fa fa-truck"></i> </span> <span class="text"> On the way </span> </div>
+                    <div class="step active"> <span class="icon"> <i class="fa fa-box"></i> </span> <span class="text">Completed</span> </div>
+                }
+            </div>
+            <hr>
+            <ul class="row">
+                
+                @foreach(var item in Model.OrderItems)
+                {
+                    <li class="col-md-4">
+                        <figure class="itemside mb-3">
+                            <div class="aside"><img src="~/images/product_images/@item.Product.MainImg" class="img-sm border"></div>
+                            <figcaption class="info align-self-center">
+                                <p class="title">@item.Product.Name</p> <span class="text-muted">@item.Price.ToString("c)</span>
+                            </figcaption>
+                        </figure>
+                    </li>
+                }
+
+            </ul>
+            <hr>
+            <a href="/Customer/Order" class="btn btn-warning" data-abc="true"> <i class="fa fa-chevron-left"></i> Back to Orders</a>
+        </div>
+    </article>
+</div>
