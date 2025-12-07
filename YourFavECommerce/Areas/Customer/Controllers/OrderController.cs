@@ -58,10 +58,13 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var items = _context.OrderItems.Include(e=>e.Product).Include(e=>e.Order).Where(e => e.OrderId == id);
 
+            var userRatings = _context.Ratings.Where(e => e.ApplicationUserId == user.Id && items.Select(e=>e.ProductId).Contains(e.ProductId));
+
             return View(new OrderWithItemsVM()
             {
                 Order = orderDetails,
-                OrderItems = items.ToList()
+                OrderItems = items.ToList(),
+                UserRatings = userRatings.ToList()
             });
         }
 
@@ -154,7 +157,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             if (!ModelState.IsValid)
                 return View();
 
-            var orderItem = _context.OrderItems.FirstOrDefault(e => e.Id == rateProductVM.Id);
+            var orderItem = _context.OrderItems.Include(e=>e.Product).FirstOrDefault(e => e.Id == rateProductVM.Id);
             if (orderItem == null) return NotFound();
 
             var newRate = new Rating()
@@ -187,6 +190,11 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             }
 
             _context.Ratings.Add(newRate);
+            _context.SaveChanges();
+
+            var avgRate = _context.Ratings.Where(e => e.ProductId == orderItem.ProductId).Average(e => e.Rate);
+
+            orderItem.Product.Rate = avgRate;
             _context.SaveChanges();
 
             //return RedirectToAction("Details", "Home", new { area = "Customer", id = orderItem.ProductId });

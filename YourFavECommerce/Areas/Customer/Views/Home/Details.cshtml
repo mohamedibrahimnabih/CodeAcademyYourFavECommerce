@@ -309,7 +309,16 @@
                         {
                             <!--FIRST LIST ITEM-->
                             <li class="media my-3">
-                                <span class="round pt-2"><img src="~/images/users/@item.ApplicationUser.Img" class="align-self-start mr-3"></span>
+
+                                <div class="row d-flex">
+                                    <div class="col-6 flex-grow-1">
+                                        <span class="round pt-2"><img src="~/images/users/@item.ApplicationUser.Img" class="align-self-start mr-3"></span>
+                                    </div>
+                                    <div class="col-6">
+                                        <a href="/Customer/Home/DeleteComment/@item.Id" class="text-danger">X</a>
+                                    </div>
+                                </div>
+
                                 <div class="media-body">
                                     <div class="row d-flex">
                                         <h6 class="user pt-2">@item.ApplicationUser.Name</h6>

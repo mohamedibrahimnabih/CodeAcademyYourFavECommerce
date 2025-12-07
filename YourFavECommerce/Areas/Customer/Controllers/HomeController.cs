@@ -110,7 +110,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var topProudcts = _context.Products.Include(e=>e.Category).Where(e=>e.Id != product.Id).OrderByDescending(e=>e.Traffic).Skip(0).Take(4);
 
-            //////////////////////////////////
+            var reatings = _context.Ratings.Include(e=>e.ApplicationUser).Where(e => e.ProductId == id);
 
             ProductDetailsVM productDetailsVM = new()
             {
@@ -120,10 +120,16 @@ namespace YourFavECommerce.Areas.Customer.Controllers
                 ProductInSamePrice = productInSamePrice.ToList(),
                 TopProducts = topProudcts.ToList(),
                 ProductInSameBrand = productInSameBrand.ToList(),
-                //////////////////////////////////
+                Ratings = reatings.ToList()
             };
 
             return View(productDetailsVM);
+        }
+
+        public IActionResult DeleteComment(int id)
+        {
+            ////////////////////////////////////////
+            return RedirectToAction("Index");   
         }
 
         public IActionResult Privacy()

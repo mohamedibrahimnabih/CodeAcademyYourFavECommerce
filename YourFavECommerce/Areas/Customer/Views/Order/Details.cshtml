@@ -57,11 +57,14 @@
                             </figcaption>
                         </figure>
 
-                        @if (item.Order.OrderStatus == OrderStatus.Completed)
+                        @if (item.Order.OrderStatus == OrderStatus.Completed && !Model.UserRatings.Select(e=>e.ProductId).Contains(item.ProductId))
                         {
                             <a href="/Customer/Order/RateProduct/@item.Id" class="btn btn-warning" data-abc="true"> Rate Product</a>
                         }
-                        
+                        else if (item.Order.OrderStatus == OrderStatus.Completed)
+                        {
+                            <a href="/Customer/Home/Details/@item.ProductId#comments" class="btn btn-warning" data-abc="true"> Show Rating</a>
+                        }
                     </li>
                 }
 
