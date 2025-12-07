@@ -24,6 +24,7 @@
     <Folder Include="Areas\ChatApp\Controllers\" />
     <Folder Include="Areas\ChatApp\Views\" />
     <Folder Include="wwwroot\images\brand_logos\" />
+    <Folder Include="wwwroot\images\ratings\" />
     <Folder Include="wwwroot\images\users\" />
     <Folder Include="wwwroot\images\product_images\product_sub_images\" />
   </ItemGroup>

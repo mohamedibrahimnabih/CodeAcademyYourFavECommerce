@@ -137,11 +137,60 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         }
 
         [HttpGet]
-        public IActionResult RateProduct(int orderItemId)
+        public IActionResult RateProduct(int id)
         {
-            var orderItem = _context.OrderItems.FirstOrDefault(e => e.Id == orderItemId);
+            var orderItem = _context.OrderItems.FirstOrDefault(e => e.Id == id);
             if (orderItem == null) return NotFound();
             return View(orderItem);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RateProduct(RateProductVM rateProductVM)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null) return NotFound();
+
+            if (!ModelState.IsValid)
+                return View();
+
+            var orderItem = _context.OrderItems.FirstOrDefault(e => e.Id == rateProductVM.Id);
+            if (orderItem == null) return NotFound();
+
+            var newRate = new Rating()
+            {
+                ApplicationUserId = user.Id,
+                ProductId = orderItem.ProductId,
+                Rate = rateProductVM.Rate,
+                Comment = rateProductVM.Comment ?? "",
+            };
+
+            if (rateProductVM.Img is not null && rateProductVM.Img.Length > 0)
+            {
+                // Save file name in DB
+                string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(rateProductVM.Img.FileName);
+
+                string fileName = $"{DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss")}_{fileNameWithoutExtension}_{Guid.NewGuid().ToString()}{Path.GetExtension(rateProductVM.Img.FileName)}";
+
+                newRate.Img = fileName;
+
+                // Save file in wwwroot
+                string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot\\images\\ratings", fileName);
+
+                //if (System.IO.File.Exists(filePath))
+                //    System.IO.File.Create(filePath);
+
+                using (var stream = System.IO.File.Create(filePath))
+                {
+                    rateProductVM.Img.CopyTo(stream);
+                }
+            }
+
+            _context.Ratings.Add(newRate);
+            _context.SaveChanges();
+
+            //return RedirectToAction("Details", "Home", new { area = "Customer", id = orderItem.ProductId });
+            return Redirect($"{Request.Scheme}://{Request.Host}/Customer/Home/Details/{orderItem.ProductId}#comments");
         }
     }
 }

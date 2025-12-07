@@ -59,7 +59,7 @@
 
                         @if (item.Order.OrderStatus == OrderStatus.Completed)
                         {
-                            <a href="/Customer/Order/RateProduct?orderItemId=@item.Id" class="btn btn-warning" data-abc="true"> Rate Product</a>
+                            <a href="/Customer/Order/RateProduct/@item.Id" class="btn btn-warning" data-abc="true"> Rate Product</a>
                         }
                         
                     </li>
