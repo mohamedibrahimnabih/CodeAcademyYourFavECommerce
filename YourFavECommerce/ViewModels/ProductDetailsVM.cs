@@ -10,5 +10,6 @@ namespace YourFavECommerce.ViewModels
         public List<Product>? ProductInSameName { get; set; }
         public List<Product>? ProductInSamePrice { get; set; }
         public List<Product>? TopProducts { get; set; }
+        public List<Rating>? Ratings { get; set; }
     }
 }

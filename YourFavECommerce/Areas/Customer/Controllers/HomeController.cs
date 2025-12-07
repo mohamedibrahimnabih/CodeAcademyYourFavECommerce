@@ -110,6 +110,8 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var topProudcts = _context.Products.Include(e=>e.Category).Where(e=>e.Id != product.Id).OrderByDescending(e=>e.Traffic).Skip(0).Take(4);
 
+            //////////////////////////////////
+
             ProductDetailsVM productDetailsVM = new()
             {
                 Product = product,
@@ -118,6 +120,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
                 ProductInSamePrice = productInSamePrice.ToList(),
                 TopProducts = topProudcts.ToList(),
                 ProductInSameBrand = productInSameBrand.ToList(),
+                //////////////////////////////////
             };
 
             return View(productDetailsVM);
