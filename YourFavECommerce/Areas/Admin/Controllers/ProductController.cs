@@ -1,7 +1,9 @@
 ﻿using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
 using YourFavECommerce.Utilites;
@@ -13,7 +15,14 @@ namespace YourFavECommerce.Areas.Admin.Controllers
     [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE},{SD.EMPLOYEE}")]
     public class ProductController : Controller
     {
-        private ApplicationDbContext _context = new();
+        private ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public ProductController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        {
+            _context = context;
+            _userManager = userManager;
+        }
 
         public IActionResult Index(string name, long? minPrice, long? maxPrice, int? categoryId, int? brandId, int page = 1)
         {
@@ -63,8 +72,12 @@ namespace YourFavECommerce.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(CreateProductVM createProductVM)
+        public async Task<IActionResult> Create(CreateProductVM createProductVM)
         {
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null) return NotFound();
+
             //Product product = new()
             //{
             //    Name = createProductVM.Name,
@@ -78,6 +91,7 @@ namespace YourFavECommerce.Areas.Admin.Controllers
             //};
 
             Product product = createProductVM.Adapt<Product>();
+            product.CreateById = user.Id;
 
             if (createProductVM.MainImg is not null && createProductVM.MainImg.Length > 0)
             {

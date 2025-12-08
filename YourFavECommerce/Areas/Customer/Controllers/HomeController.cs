@@ -90,9 +90,9 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
         public IActionResult Details(int id)
         {
-            var product = _context.Products.FirstOrDefault(e => e.Id == id);
+            var product = _context.Products.Include(e=>e.ApplicationUser).FirstOrDefault(e => e.Id == id);
             
-            if (product is null)
+            if (product is null || product.ApplicationUser is null)
                 return NotFound();
 
             product.Traffic += 1;
@@ -144,9 +144,36 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         [HttpPost]
         public async Task<IActionResult> Reply(int id, int ratingId, string reply)
         {
-            ////////////////////////////
+            var user = await _userManager.GetUserAsync(User);
 
-            return RedirectToAction("Details", new { id });
+            if (user is null) return NotFound();
+
+            _context.RatingReplies.Add(new()
+            {
+                ApplicationUserId = user.Id,
+                Comment = reply,
+                RatingId = ratingId
+            });
+
+            _context.SaveChanges();
+
+
+            //return RedirectToAction("Details", new { id });
+            return Redirect($"{Request.Scheme}://{Request.Host}/Customer/Home/Details/{id}#comments");
+        }
+
+        public IActionResult IncremntRate(int productId, int id)
+        {
+            var rate = _context.Ratings.FirstOrDefault(e => e.Id == id);
+
+            if (rate is null) return NotFound();
+
+            rate.Rank += 1;
+            _context.SaveChanges();
+
+            //return RedirectToAction("Details", new { id = productId });
+            return Redirect($"{Request.Scheme}://{Request.Host}/Customer/Home/Details/{productId}#comments");
+
         }
 
         public IActionResult Privacy()
