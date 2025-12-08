@@ -315,7 +315,14 @@
                                         <span class="round pt-2"><img src="~/images/users/@item.ApplicationUser.Img" class="align-self-start mr-3"></span>
                                     </div>
                                     <div class="col-3">
-                                        <a href="/customer/home/IncremntRate/@item.Id?productId=@Model.Product.Id"><i class="bi bi-arrow-up-square-fill"></i></a>
+                                        @if (ViewBag.isRated is not null && !ViewBag.isRated)
+                                        {
+                                            <a href="/customer/home/IncremntRate/@item.Id?productId=@Model.Product.Id"><i class="bi bi-arrow-up-square-fill"></i></a>
+                                        }
+                                        else
+                                        {
+                                            <a class="disabled" href="/customer/home/IncremntRate/@item.Id?productId=@Model.Product.Id"><i class="bi bi-arrow-up-square-fill"></i></a>
+                                        }
                                         @if(item.Rank > 0)
                                         {
                                             <span class="text-success">@item.Rank</span>
@@ -328,8 +335,17 @@
                                         {
                                             <span class="text-danger">@item.Rank</span>
                                         }
-                                        
-                                        <a href="/customer/home/DecremntRate/@item.Id?productId=@Model.Product.Id"><i class="bi bi-arrow-down-square-fill"></i></a>
+
+                                        @if (ViewBag.isRated is not null && !ViewBag.isRated)
+                                        {
+                                            <a href="/customer/home/DecremntRate/@item.Id?productId=@Model.Product.Id"><i class="bi bi-arrow-down-square-fill"></i></a>
+
+                                        }
+                                        else
+                                        {
+                                            <a class="disabled" href="/customer/home/DecremntRate/@item.Id?productId=@Model.Product.Id"><i class="bi bi-arrow-down-square-fill"></i></a>
+                                        }
+
                                     </div>
                                 </div>
 

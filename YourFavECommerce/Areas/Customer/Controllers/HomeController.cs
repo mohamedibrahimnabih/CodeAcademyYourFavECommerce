@@ -162,13 +162,48 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             return Redirect($"{Request.Scheme}://{Request.Host}/Customer/Home/Details/{id}#comments");
         }
 
-        public IActionResult IncremntRate(int productId, int id)
+        public async Task<IActionResult> IncremntRate(int productId, int id)
         {
             var rate = _context.Ratings.FirstOrDefault(e => e.Id == id);
 
             if (rate is null) return NotFound();
 
-            rate.Rank += 1;
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null) return NotFound();
+
+            var isFounded = _context.UserRatings.Any(e => e.ApplicationUserId == user.Id && e.RatingId == id);
+
+            if(!isFounded)
+            {
+                rate.Rank += 1;
+
+                _context.UserRatings.Add(new()
+                {
+                    RatingId = id,
+                    ApplicationUserId = user.Id
+                });
+
+                _context.SaveChanges();
+            }
+            else
+            {
+                ViewBag.isRated = isFounded;
+            }
+
+            //return RedirectToAction("Details", new { id = productId });
+            return Redirect($"{Request.Scheme}://{Request.Host}/Customer/Home/Details/{productId}#comments");
+
+        }
+
+        public async Task<IActionResult> DecremntRate(int productId, int id)
+        {
+            var rate = _context.Ratings.FirstOrDefault(e => e.Id == id);
+
+            if (rate is null) return NotFound();
+
+            rate.Rank -= 1;
             _context.SaveChanges();
 
             //return RedirectToAction("Details", new { id = productId });

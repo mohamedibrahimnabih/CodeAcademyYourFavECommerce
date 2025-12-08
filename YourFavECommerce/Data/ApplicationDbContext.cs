@@ -29,6 +29,7 @@ namespace YourFavECommerce.Data
         public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<RatingReply> RatingReplies { get; set; }
+        public DbSet<UserRating> UserRatings { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
