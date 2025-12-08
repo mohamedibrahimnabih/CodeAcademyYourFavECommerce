@@ -314,9 +314,9 @@
                                     <div class="col-6 flex-grow-1">
                                         <span class="round pt-2"><img src="~/images/users/@item.ApplicationUser.Img" class="align-self-start mr-3"></span>
                                     </div>
-                                    <div class="col-6">
+                                    @* <div class="col-6">
                                         <a href="/Customer/Home/DeleteComment/@item.Id" class="text-danger">X</a>
-                                    </div>
+                                    </div> *@
                                 </div>
 
                                 <div class="media-body">
@@ -336,6 +336,35 @@
                                     }
                                 </div>
                             </li>
+
+                            <div class="row m-3">
+                                @foreach(var reply in Model.RatingReplys)
+                                {
+                                    if(item.Id == reply.RatingId)
+                                    {
+                                        <div class="media-body">
+                                            <div class="row d-flex">
+                                                <h6 class="user pt-2">Byer <i class="bi bi-check2-circle"></i></h6>
+                                            </div>
+                                            <p class="text">@reply.Comment</p>
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                            <div class="row m-3">
+                                <form method="post" action="/Customer/Home/Reply">
+                                    <input type="hidden" name="id" value="@Model.Product.Id" />
+                                    <input type="hidden" name="ratingId" value="@item.Id" />
+
+                                    <div class="form-floating">
+                                        <textarea name="reply" class="form-control" placeholder="Leave a comment here" id="floatingTextarea"></textarea>
+                                        <label for="floatingTextarea">Reply</label>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-primary my-2">Submit</button>
+                                </form>
+                            </div>
                             <hr />
                         }
                     </ul>

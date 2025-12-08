@@ -110,7 +110,9 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             var topProudcts = _context.Products.Include(e=>e.Category).Where(e=>e.Id != product.Id).OrderByDescending(e=>e.Traffic).Skip(0).Take(4);
 
-            var reatings = _context.Ratings.Include(e=>e.ApplicationUser).Where(e => e.ProductId == id);
+            var ratings = _context.Ratings.Include(e=>e.ApplicationUser).Where(e => e.ProductId == id);
+            var ratingReplys = _context.RatingReplies.Include(e => e.ApplicationUser)
+                .Where(e => ratings.Select(e => e.Id).Contains(e.RatingId));
 
             ProductDetailsVM productDetailsVM = new()
             {
@@ -120,7 +122,8 @@ namespace YourFavECommerce.Areas.Customer.Controllers
                 ProductInSamePrice = productInSamePrice.ToList(),
                 TopProducts = topProudcts.ToList(),
                 ProductInSameBrand = productInSameBrand.ToList(),
-                Ratings = reatings.ToList()
+                Ratings = ratings.ToList(),
+                RatingReplys = ratingReplys.ToList(),
             };
 
             return View(productDetailsVM);
@@ -128,8 +131,22 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
         public IActionResult DeleteComment(int id)
         {
-            ////////////////////////////////////////
+            var comment = _context.Ratings.FirstOrDefault(e => e.Id == id);
+
+            if (comment is null) return NotFound();
+
+            _context.Ratings.Remove(comment);
+            _context.SaveChanges();
+
             return RedirectToAction("Index");   
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Reply(int id, int ratingId, string reply)
+        {
+            ////////////////////////////
+
+            return RedirectToAction("Details", new { id });
         }
 
         public IActionResult Privacy()
