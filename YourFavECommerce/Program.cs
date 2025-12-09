@@ -19,7 +19,7 @@ namespace YourFavECommerce
             builder.Services.AddControllersWithViews();
 
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer("Data Source=.;Initial Catalog=CodeAcademyYourFavECommerce;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False"));
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             builder.Services.AddTransient<IEmailSender, EmailSender>();
 

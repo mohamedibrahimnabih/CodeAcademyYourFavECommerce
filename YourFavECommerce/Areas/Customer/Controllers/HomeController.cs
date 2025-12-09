@@ -17,13 +17,14 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
-        private ApplicationDbContext _context = new();
+        private readonly ApplicationDbContext _context;// = new();
 
-        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public HomeController(ILogger<HomeController> logger, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
         {
             _logger = logger;
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
         public async Task<IActionResult> Index(string productName, long? minPrice, long? maxPrice, int? categoryId, int? brandId, bool isHot, int page = 1)
@@ -201,14 +202,54 @@ namespace YourFavECommerce.Areas.Customer.Controllers
         {
             var rate = _context.Ratings.FirstOrDefault(e => e.Id == id);
 
-            if (rate is null) return NotFound();
+            var user = await _userManager.GetUserAsync(User);
 
-            rate.Rank -= 1;
-            _context.SaveChanges();
+            if (user is null) return NotFound();
+
+            var isFounded = _context.UserRatings.Any(e => e.ApplicationUserId == user.Id && e.RatingId == id);
+
+            ViewBag.isRated = false;
+
+            if (!isFounded)
+            {
+                rate.Rank -= 1;
+
+                _context.UserRatings.Add(new()
+                {
+                    RatingId = id,
+                    ApplicationUserId = user.Id
+                });
+
+                _context.SaveChanges();
+            }
+            else
+            {
+                ViewBag.isRated = isFounded;
+            }
 
             //return RedirectToAction("Details", new { id = productId });
             return Redirect($"{Request.Scheme}://{Request.Host}/Customer/Home/Details/{productId}#comments");
 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SendMessage(string message)
+        {
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (user is null) return NotFound();
+
+            _context.Messages.Add(new()
+            {
+                SenderId = user.Id,
+                Text = message
+            });
+            _context.SaveChanges();
+
+            TempData["Success-notification"] = "Add Ticket Successfully";
+
+            return RedirectToAction("Index", "Ticket");
         }
 
         public IActionResult Privacy()

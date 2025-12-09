@@ -6,13 +6,17 @@ namespace YourFavECommerce.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        private readonly IConfiguration _configuration;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IConfiguration configuration)
         : base(options)
         {
+            _configuration = configuration;
         }
 
-        public ApplicationDbContext()
+        public ApplicationDbContext(IConfiguration configuration)
         {
+            _configuration = configuration;
         }
 
         public DbSet<Product> Products { get; set; }
@@ -30,12 +34,13 @@ namespace YourFavECommerce.Data
         public DbSet<Rating> Ratings { get; set; }
         public DbSet<RatingReply> RatingReplies { get; set; }
         public DbSet<UserRating> UserRatings { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
 
-            optionsBuilder.UseSqlServer("Data Source=.;Initial Catalog=CodeAcademyYourFavECommerce;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=True;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            optionsBuilder.UseSqlServer(_configuration.GetConnectionString("DefaultConnection"));
         }
     }
 }

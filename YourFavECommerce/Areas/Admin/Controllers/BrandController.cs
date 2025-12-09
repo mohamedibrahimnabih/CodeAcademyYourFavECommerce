@@ -13,7 +13,12 @@ namespace YourFavECommerce.Areas.Admin.Controllers
     [Authorize(Roles = $"{SD.SUPER_ADMIN_ROLE},{SD.ADMIN_ROLE},{SD.EMPLOYEE}")]
     public class BrandController : Controller
     {
-        private ApplicationDbContext _context = new();
+        private readonly ApplicationDbContext _context;
+
+        public BrandController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
         public IActionResult Index(FilterVM filterVM)
         {

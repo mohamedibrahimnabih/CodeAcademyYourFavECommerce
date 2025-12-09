@@ -1228,4 +1228,171 @@
         </div>
     </div>
 </div>
-<!-- Bestseller Products End -->
+@if (User.Identity.IsAuthenticated)
+{
+    <!-- Chat Box -->
+    <div id="chatBox" class="chat-box collapsed">
+        <div class="chat-header" id="chatToggle">
+            <h5>
+                <i class="fas fa-comments me-2"></i>
+                Customer Support
+            </h5>
+            <button class="chat-toggle">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+            <div class="chat-message message-bot">
+                <div>Hello! 👋 Welcome to our store. How can I help you today?</div>
+                <div class="message-time">Just now</div>
+            </div>
+        </div>
+
+        <div class="chat-footer">
+            <form action="/Customer/Home/SendMessage" method="post">
+                <div class="chat-input-group">
+                    <input type="text"
+                           name="message"
+                           class="chat-input"
+                           placeholder="Type your message here..."
+                           maxlength="500"
+                           required>
+
+                    <button type="submit" class="chat-send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+                @Html.AntiForgeryToken()
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const chatBox = document.getElementById('chatBox');
+            const chatToggle = document.getElementById('chatToggle');
+            const chatBody = document.getElementById('chatBody');
+            const chatInput = document.getElementById('chatInput');
+            const chatForm = document.getElementById('chatForm');
+            const chatSendBtn = document.getElementById('chatSendBtn');
+            let isOpen = false;
+
+            // Toggle Chat
+            chatToggle.addEventListener('click', function () {
+                if (isOpen) {
+                    chatBox.classList.add('collapsed');
+                    isOpen = false;
+                } else {
+                    chatBox.classList.remove('collapsed');
+                    isOpen = true;
+                    scrollToBottom();
+                }
+            });
+
+            // Handle ENTER key
+            chatInput.addEventListener('keypress', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    chatForm.dispatchEvent(new Event('submit'));
+                }
+            });
+
+            // Handle form submission
+            chatForm.addEventListener('submit', function (e) {
+                e.preventDefault();
+
+                const message = chatInput.value.trim();
+                if (!message) {
+                    showError("Please type a message");
+                    return;
+                }
+
+                // Add user message to UI immediately
+                addMessage(message, "user");
+
+                // Show processing message
+                const processingMsg = addMessage("Generating ticket in processing...", "bot");
+                processingMsg.classList.add("processing-message");
+
+                // Disable input and button
+                chatInput.disabled = true;
+                chatSendBtn.disabled = true;
+                chatSendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                // Wait 3 seconds before submitting the form
+                setTimeout(() => {
+                    // Submit the original form
+                    chatForm.submit();
+                }, 3000);
+            });
+
+            function addMessage(text, sender) {
+                const div = document.createElement('div');
+                div.className = `chat-message message-${sender}`;
+                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                div.innerHTML = `
+                    <div>${text}</div>
+                    <div class="message-time">${time}</div>
+                `;
+                chatBody.appendChild(div);
+                scrollToBottom();
+                return div;
+            }
+
+            function showError(msg) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = "chat-message message-system";
+                errorDiv.innerHTML = `
+                    <div class="text-danger">${msg}</div>
+                    <div class="message-time">Just now</div>
+                `;
+                chatBody.appendChild(errorDiv);
+                scrollToBottom();
+                setTimeout(() => {
+                    if (errorDiv.parentNode) {
+                        errorDiv.remove();
+                    }
+                }, 3000);
+            }
+
+            function scrollToBottom() {
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+
+            // Auto open when TempData success exists (after redirect from Ticket action)
+            @if (TempData["Success-notification"] != null)
+            {
+                    <text>
+                        setTimeout(() => {
+                            chatBox.classList.remove('collapsed');
+                            isOpen = true;
+                            addMessage("Your ticket has been created successfully!", "bot");
+                        }, 800);
+                    </text>
+            }
+        });
+    </script>
+
+    <style>
+        .processing-message {
+            font-style: italic;
+            color: #666;
+            animation: pulse 1.5s infinite;
+        }
+
+        @@keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
+    </style>
+}
