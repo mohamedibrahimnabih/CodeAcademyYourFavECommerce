@@ -46,11 +46,25 @@ namespace YourFavECommerce.Areas.Admin.Controllers
 
         public IActionResult MarkAsCompleted(int id)
         {
+            var message = _context.Messages.FirstOrDefault(e => e.Id == id);
+
+            if (message is null) return NotFound();
+
+            message.TicketStatus = TicketStatus.Completed;
+            _context.SaveChanges();
+
             return RedirectToAction("Index");
         }
 
         public IActionResult Canceled(int id)
         {
+            var message = _context.Messages.FirstOrDefault(e => e.Id == id);
+
+            if (message is null) return NotFound();
+
+            message.TicketStatus = TicketStatus.Canceled;
+            _context.SaveChanges();
+
             return RedirectToAction("Index");
         }
     }

@@ -632,7 +632,7 @@ ul.row, ul.row-sm {
     }
 
         .chat-box.collapsed {
-            width: 250px;
+            width: 180px;
         }
 }
 

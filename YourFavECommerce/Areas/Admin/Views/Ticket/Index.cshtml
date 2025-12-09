@@ -58,6 +58,7 @@
                         <th scope="col">Text</th>
                         <th scope="col">Date</th>
                         <th scope="col">Status</th>
+
                         <th scope="col">Actions</th>
                     </tr>
                 </thead>
@@ -84,13 +85,20 @@
 
                             @if(User.IsInRole(SD.ADMIN_ROLE) || User.IsInRole(SD.SUPER_ADMIN_ROLE))
                             {
-                                <td>
-                                    <a href="/Admin/Ticket/MarkAsCompleted?id=@item.Id" class="btn btn-success">Mark As Completed</a>
-                                </td>
+                                @if(item.TicketStatus == TicketStatus.InProcessing)
+                                {
+                                    <td>
+                                        <a href="/Admin/Ticket/MarkAsCompleted?id=@item.Id" class="btn btn-success">Mark As Completed</a>
+                                    </td>
 
-                                <td>
-                                    <a href="/Admin/Ticket/Canceled?id=@item.Id" class="btn btn-danger btn-delete">Canceled</a>
-                                </td>
+                                    <td>
+                                        <a href="/Admin/Ticket/Canceled?id=@item.Id" class="btn btn-danger btn-delete">Canceled</a>
+                                    </td>
+                                }
+                                else
+                                {
+                                    <td>No Actions</td>
+                                }
                             }
 
                             

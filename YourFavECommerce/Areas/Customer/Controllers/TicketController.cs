@@ -29,7 +29,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             if (user is null) return NotFound();
 
 
-            var tickets = _context.Messages.Where(e => e.SenderId == user.Id);
+            var tickets = _context.Messages.Where(e => e.SenderId == user.Id && !e.IsDeleted);
 
             if (filterVM.Name is not null)
                 tickets = tickets.Where(e => e.Text.ToLower().Contains(filterVM.Name.ToLower().Trim()));
@@ -52,7 +52,8 @@ namespace YourFavECommerce.Areas.Customer.Controllers
 
             if (message is null) return NotFound();
 
-            _context.Messages.Remove(message);
+            message.IsDeleted = true;
+            message.TicketStatus = TicketStatus.Canceled;
             _context.SaveChanges();
 
             TempData["success-notification"] = "Delete Message Successfully";
