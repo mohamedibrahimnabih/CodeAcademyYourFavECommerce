@@ -4,13 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using YourFavECommerce.Data;
 using YourFavECommerce.Models;
-using YourFavECommerce.Utilites;
 using YourFavECommerce.ViewModels;
 
-namespace YourFavECommerce.Areas.Customer.Controllers
+namespace YourFavECommerce.Areas.Admin.Controllers
 {
-    [Area("Customer")]
-    [Authorize(Roles = $"{SD.ADMIN_ROLE},{SD.SUPER_ADMIN_ROLE},{SD.EMPLOYEE}")]
+    [Area("Admin")]
+    [Authorize]
     public class TicketController: Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -29,7 +28,7 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             if (user is null) return NotFound();
 
 
-            var tickets = _context.Messages.Where(e => e.SenderId == user.Id);
+            var tickets = _context.Messages.AsQueryable();
 
             if (filterVM.Name is not null)
                 tickets = tickets.Where(e => e.Text.ToLower().Contains(filterVM.Name.ToLower().Trim()));
@@ -45,20 +44,14 @@ namespace YourFavECommerce.Areas.Customer.Controllers
             });
         }
 
-        public IActionResult Delete(int id)
+        public IActionResult MarkAsCompleted(int id)
         {
-
-            var message = _context.Messages.FirstOrDefault(e => e.Id == id);
-
-            if (message is null) return NotFound();
-
-            _context.Messages.Remove(message);
-            _context.SaveChanges();
-
-            TempData["success-notification"] = "Delete Message Successfully";
-
             return RedirectToAction("Index");
+        }
 
+        public IActionResult Canceled(int id)
+        {
+            return RedirectToAction("Index");
         }
     }
 }
