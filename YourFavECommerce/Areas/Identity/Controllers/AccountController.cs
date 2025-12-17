@@ -146,6 +146,12 @@ namespace YourFavECommerce.Areas.Identity.Controllers
                     ModelState.AddModelError("EmailOrUserName", "Too many Attempts, Please try again later");
                     return View(loginVM);
                 }
+
+                if (!user.LockoutEnabled)
+                {
+                    ModelState.AddModelError("EmailOrUserName", $"You Have Blocked till {user.LockoutEnd}");
+                    return View(loginVM);
+                }
             }
             else
             {

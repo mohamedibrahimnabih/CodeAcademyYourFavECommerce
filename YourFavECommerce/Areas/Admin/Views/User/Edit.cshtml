@@ -1,0 +1,62 @@
+﻿@model UserRolesVM
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-12">
+            <h2 class="display-6">Update User</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post">
+                <input type="hidden" name="userId" value="@Model.UserId" />
+
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" name="name" value="@Model.Name" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="UserName" class="form-label">User Name</label>
+                    <input class="form-control" name="UserName" value="@Model.UserName" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <input class="form-control" name="Email" value="@Model.Email" disabled>
+                </div>
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" name="name" value="@Model.Name" disabled>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Roles" class="form-label">Roles</label>
+                    <select name="Roles" class="form-select" multiple>
+                        @foreach(var role in Model.Roles)
+                        {
+                            bool selected = false;
+
+                            foreach (var userRole in Model.UserRoles)
+                            {
+                                if (role.Name == userRole)
+                                {
+                                    <option value="@role.Name" selected>@role.Name</option>
+
+                                    selected = true;
+                                }
+                            }
+
+                            if (!selected)
+                            {
+                                <option value="@role.Name">@role.Name</option>
+                            }
+                        }
+                    </select>
+                </div> 
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>

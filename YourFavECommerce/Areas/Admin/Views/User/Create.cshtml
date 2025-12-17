@@ -1,0 +1,65 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model List<IdentityRole>
+
+<div class="container">
+    <div class="row mb-3 align-items-center my-3">
+        <div class="col-md-12">
+            <h2 class="display-6">Create new User</h2>
+        </div>
+    </div>
+
+    <div class="row my-3">
+        <div class="col-12">
+            <form method="post">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Name</label>
+                    <input class="form-control" name="name">
+                </div>
+
+                <div class="mb-3">
+                    <label for="UserName" class="form-label">UserName</label>
+                    <input class="form-control" name="UserName">
+                </div>
+
+                <div class="mb-3">
+                    <label for="Email" class="form-label">Email</label>
+                    <input type="email" class="form-control" name="Email">
+                </div>
+
+                <div class="mb-3">
+                    <label for="PhoneNumber" class="form-label">PhoneNumber</label>
+                    <input class="form-control" name="PhoneNumber">
+                </div>
+
+                <div class="mb-3">
+                    <label for="Password" class="form-label">Password</label>
+                    <input type="password" class="form-control" name="Password">
+                </div>
+
+                <div class="mb-3">
+                    <label for="ConfirmPassword" class="form-label">Confirm Password</label>
+                    <input type="password" class="form-control" name="ConfirmPassword">
+                </div>
+
+                <div class="mb-3">
+                    <label for="EmailConfirmation" class="form-label">Email Confirmation</label>
+                    <select name="EmailConfirmation" class="form-select">
+                        <option value="true">Confirmed</option>
+                        <option value="false">Not Confirmed</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="Roles" class="form-label">Roles</label>
+                    <select name="Roles" class="form-select" multiple>
+                        @foreach(var item in Model)
+                        {
+                            <option value="@item.Name">@item.Name</option>
+                        }
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
